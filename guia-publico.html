@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guia Exkombeiros - Melhores Campings</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background: #f5f5f5; }
+    h1 { color: #2E7D32; text-align: center; }
+    .camping { background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .nome { font-size: 22px; font-weight: bold; color: #1B5E20; }
+    .media { font-size: 28px; color: #FFC107; margin: 10px 0; }
+    .detalhes { color: #666; font-size: 14px; }
+    .categoria { background: #E8F5E9; padding: 8px; border-radius: 6px; margin: 5px 0; }
+    .carregando { text-align: center; padding: 40px; color: #666; }
+  </style>
+</head>
+<body>
+  <h1>🏕️ Guia Exkombeiros</h1>
+  <p style="text-align: center; color: #666;">Ranking atualizado em tempo real</p>
+  <div id="lista"><div class="carregando">Carregando avaliações...</div></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCFeqtsuT-4Q4e8EyrsEPRcIo3I6AmfEzE",
+      authDomain: "exkombeiros-24a9a.firebaseapp.com",
+      databaseURL: "https://exkombeiros-24a9a-default-rtdb.firebaseio.com",
+      projectId: "exkombeiros-24a9a",
+      storageBucket: "exkombeiros-24a9a.firebasestorage.app",
+      messagingSenderId: "507759690855",
+      appId: "1:507759690855:web:8a6ec18c9a98d7ee9900c2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    onValue(ref(db, 'avaliacoes'), (snapshot) => {
+      const dados = snapshot.val();
+      if (!dados) {
+        document.getElementById('lista').innerHTML = '<div class="carregando">Nenhuma avaliação ainda</div>';
+        return;
+      }
+
+      const campings = {};
+      Object.values(dados).forEach(av => {
+        if (!campings[av.camping]) {
+          campings[av.camping] = { notas: [], categorias: {} };
+        }
+        campings[av.camping].notas.push(av.nota);
+        if (!campings[av.camping].categorias[av.categoria]) {
+          campings[av.camping].categorias[av.categoria] = [];
+        }
+        campings[av.camping].categorias[av.categoria].push(av.nota);
+      });
+
+      const ranking = Object.entries(campings).map(([nome, dados]) => {
+        const media = dados.notas.reduce((a, b) => a + b, 0) / dados.notas.length;
+        return { nome, media, total: dados.notas.length, categorias: dados.categorias };
+      }).sort((a, b) => b.media - a.media);
+
+      document.getElementById('lista').innerHTML = ranking.map(c => {
+        const estrelas = '★'.repeat(Math.round(c.media)) + '☆'.repeat(5 - Math.round(c.media));
+        const cats = Object.entries(c.categorias).map(([cat, notas]) => {
+          const mediaCat = notas.reduce((a, b) => a + b, 0) / notas.length;
+          return `<div class="categoria"><strong>${cat}:</strong> ${mediaCat.toFixed(1)} ★</div>`;
+        }).join('');
+        
+        return `
+          <div class="camping">
+            <div class="nome">${c.nome}</div>
+            <div class="media">${estrelas} ${c.media.toFixed(1)}</div>
+            <div class="detalhes">${c.total} avaliações</div>
+            ${cats}
+          </div>
+        `;
+      }).join('');
+    });
+  </script>
+</body>
+</html>
