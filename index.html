@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exkombeiros - Avaliação</title>
+  <!-- SEU CSS ORIGINAL INTEIRO AQUI - NÃO MUDEI NADA -->
+  <style>
+    /* Colei todo o CSS do seu arquivo original aqui pra manter idêntico */
+    body { font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; padding: 10px; background: #e0e0e0; }
+    .abas { display: flex; gap: 5px; margin-bottom: 15px; }
+    .aba { flex: 1; padding: 12px; background: #bdbdbd; border: none; border-radius: 8px 8px 0 0; cursor: pointer; font-weight: bold; }
+    .aba.ativa { background: #2E7D32; color: white; }
+    .conteudo { display: none; background: white; padding: 20px; border-radius: 0 0 12px 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .conteudo.ativo { display: block; }
+    h1 { color: #1B5E20; text-align: center; margin: 0 0 15px; font-size: 22px; }
+    h2 { color: #2E7D32; font-size: 16px; margin: 20px 0 10px; border-bottom: 2px solid #E8F5E9; padding-bottom: 5px; }
+    label { display: block; margin: 12px 0 5px; font-weight: bold; font-size: 14px; }
+    input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+    .linha { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .linha-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .btn-grupo { display: flex; gap: 8px; margin: 10px 0; flex-wrap: wrap; }
+    .btn-opcao { flex: 1; min-width: 80px; padding: 12px 8px; border: 2px solid #ddd; background: #f9f9f9; border-radius: 8px; cursor: pointer; text-align: center; font-size: 13px; }
+    .btn-opcao.ativo { background: #C8E6C9; border-color: #4CAF50; font-weight: bold; }
+    .check-grupo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; }
+    .check-item { background: #f9f9f9; padding: 10px; border-radius: 8px; border: 2px solid #e0e0e0; cursor: pointer; text-align: center; font-size: 13px; }
+    .check-item.ativo { background: #C8E6C9; border-color: #4CAF50; font-weight: bold; }
+    .nota-final { background: #FFF9C4; padding: 15px; border-radius: 8px; text-align: center; font-size: 24px; font-weight: bold; color: #F57C00; margin: 15px 0; }
+    .medicao { background: #E3F2FD; padding: 12px; border-radius: 8px; margin: 10px 0; }
+    .medicao label { margin: 8px 0 3px; font-size: 13px; }
+    .medicao input { padding: 8px; }
+    button.salvar { background: #2E7D32; color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 15px; }
+    button.salvar:disabled { background: #ccc; }
+    .sucesso { background: #4CAF50; color: white; padding: 15px; border-radius: 8px; text-align: center; display: none; margin-bottom: 15px; }
+    .avaliador-select { background: #E3F2FD; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+    .mini-ranking { background: #f5f5f5; padding: 12px; border-radius: 8px; margin: 10px 0; }
+    .mini-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #ddd; }
+    .mini-item:last-child { border-bottom: none; }
+  </style>
+</head>
+<body>
+  <!-- SEU HTML ORIGINAL INTEIRO - ABAS, CAMPOS, BOTÕES, TUDO -->
+  <h1>🏕️ Exkombeiros</h1>
+  
+  <div class="abas">
+    <button class="aba ativa" data-aba="entrada">1. Entrada</button>
+    <button class="aba" data-aba="questionario">2. Questionário</button>
+    <button class="aba" data-aba="ranking">3. Ranking</button>
+  </div>
+
+  <div class="conteudo ativo" id="entrada">
+    <div class="sucesso" id="sucesso">Avaliação salva na nuvem!</div>
+    <div class="avaliador-select">
+      <label>Quem está avaliando?</label>
+      <select id="avaliador">
+        <option value="Rogério">Rogério</option>
+        <option value="Esposa">Esposa</option>
+      </select>
+    </div>
+    <h2>📍 Dados do Camping</h2>
+    <label>Nome do Camping</label>
+    <input type="text" id="nomeCamping" placeholder="Ex: Camping Paraíso da Serra">
+    <div class="linha">
+      <div><label>Cidade</label><input type="text" id="cidade" placeholder="Ex: São Thomé"></div>
+      <div><label>Estado</label><input type="text" id="estado" placeholder="MG" maxlength="2"></div>
+    </div>
+    <label>Telefone/WhatsApp</label>
+    <input type="text" id="telefone" placeholder="(00) 00000-0000">
+    <label>Preço da diária</label>
+    <input type="text" id="preco" placeholder="Ex: R$ 50 por pessoa">
+    <label>Coordenadas GPS</label>
+    <input type="text" id="gps" placeholder="Ex: -21.987, -44.987">
+  </div>
+
+  <div class="conteudo" id="questionario">
+    <!-- MANTIVE TODOS OS SEUS CAMPOS TÉCNICOS ORIGINAIS -->
+    <h2>⚡ Elétrica</h2>
+    <label>Tipo de energia disponível</label>
+    <div class="btn-grupo" data-campo="eletrica">
+      <div class="btn-opcao" data-valor="110V" data-peso="3">110V</div>
+      <div class="btn-opcao" data-valor="220V" data-peso="3">220V</div>
+      <div class="btn-opcao" data-valor="Ambas" data-peso="5">110V + 220V</div>
+      <div class="btn-opcao" data-valor="Sem" data-peso="0">Sem energia</div>
+    </div>
+    <label>Estabilidade da tensão</label>
+    <div class="btn-grupo" data-campo="tensao">
+      <div class="btn-opcao" data-valor="Estável" data-peso="5">Estável</div>
+      <div class="btn-opcao" data-valor="Oscila" data-peso="2">Oscila</div>
+      <div class="btn-opcao" data-valor="Não testei" data-peso="0">Não testei</div>
+    </div>
+    <div class="medicao">
+      <label><strong>Medições de Tensão - Manual
