@@ -1,1 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Exkombeiros">
+<title>Guia Exkombeiros de Camping</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --verde:#1a3a2a; --verde-m:#2d5a3d; --verde-c:#4a8c5c;
+  --ouro:#c8a84b; --ouro-c:#e8c96b;
+  --creme:#f5f0e8; --cinza:#8a8a7a; --txt:#1a1a14;
+  --ok:#27ae60; --warn:#e67e22; --bad:#c0392b;
+  --radius:12px; --shadow:0 2px 16px rgba(0,0,0,0.06);
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { background:#e8e2d8; font-family:'DM Sans', sans-serif; color:var(--txt); padding-bottom:100px; }
+.header { background:var(--verde); color:var(--creme); padding:40px 20px 20px; text-align:center; position:relative; }
+.header h1 { font-family:'Playfair Display', serif; font-weight:900; font-size:24px; letter-spacing:-0.5px; }
+.header p { font-size:11px; color:var(--ouro-c); text-transform:uppercase; tracking:2px; margin-top:4px; font-weight:500; }
+.form-container { max-w:500px; margin:0 auto; padding:16px; }
+.section-title { font-family:'Playfair Display', serif; font-size:16px; font-weight:700; color:var(--verde); margin:20px 4px 10px; display:flex; justify-content:between; align-items:center; }
+.section-title span { font-family:'DM Sans', sans-serif; font-size:10px; background:var(--verde-c); color:#fff; padding:2px 6px; border-radius:4px; margin-left:6px; }
+.card { background:#fff; border-radius:var(--radius); padding:16px; box-shadow:var(--shadow); margin-bottom:12px; }
+.input-group { margin-bottom:12px; }
+.input-group label { display:block; font-size:11px; font-weight:600; color:var(--cinza); text-transform:uppercase; margin-bottom:4px; }
+.input-group input, .input-group select, .input-group textarea { width:100%; background:var(--creme); border:1px solid #dcd6cd; border-radius:8px; padding:10px 12px; font-family:inherit; font-size:14px; color:var(--txt); outline:none; }
+.chk-item { display:flex; align-items:center; justify-content:between; padding:10px 0; border-bottom:1px solid #f5f0e8; cursor:pointer; }
+.chk-item:last-child { border-bottom:none; }
+.chk-label { font-size:13px; font-weight:500; padding-right:12px; line-height:1.4; }
+.chk-box { width:22px; height:22px; border:2px solid var(--verde-c); border-radius:6px; display:flex; align-items:center; justify-content:center; background:#fff; flex-shrink:0; }
+.chk-box::after { content:'✓'; color:#fff; font-size:14px; font-weight:bold; display:none; }
+input[type="checkbox"] { display:none; }
+input[type="checkbox"]:checked + .chk-box { background:var(--ok); border-color:var(--ok); }
+input[type="checkbox"]:checked + .chk-box::after { display:block; }
+.btn { width:100%; background:var(--verde); color:var(--creme); border:none; border-radius:8px; padding:14px; font-size:14px; font-weight:600; cursor:pointer; }
+.floating-score { position:fixed; bottom:0; left:0; right:0; background:var(--verde); color:#fff; padding:16px 20px; display:flex; align-items:center; justify-content:between; box-shadow:0 -4px 20px rgba(0,0,0,0.1); z-index:999; }
+.floating-score .info h2 { font-size:28px; font-family:'Playfair Display', serif; font-weight:900; }
+.floating-score .action { width:45%; }
+.floating-score .action .btn { padding:10px; background:var(--ouro); color:var(--verde); font-weight:700; font-size:12px; }
+.list-item { background:#fff; border-radius:var(--radius); padding:12px 16px; margin-bottom:8px; display:flex; justify-content:between; align-items:center; }
+.list-item-info h4 { font-family:'Playfair Display', serif; font-size:15px; }
+.list-item-score { font-size:18px; font-weight:700; color:var(--ouro); background:var(--creme); padding:4px 10px; border-radius:6px; }
+#toast { position:fixed; top:20px; left:50%; transform:translateX(-50%); background:rgba(26,58,42,0.95); color:#fff; padding:10px 20px; border-radius:30px; font-size:12px; display:none; z-index:10000; }
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<div class="header">
+  <h1>Auditoria Exkombeiros</h1>
+  <p>Painel de Controle em Loco</p>
+</div>
+<div class="form-container">
+  <div class="section-title">📍 Identificação do Local</div>
+  <div class="card">
+    <div class="input-group"><label>Nome do Camping</label><input type="text" id="nome" placeholder="Ex: Camping do Sol"></div>
+    <div class="input-group"><label>Cidade/Região e Estado (UF)</label><input type="text" id="cidade" placeholder="Ex: Diamantina - MG"></div>
+    <div class="input-group"><label>Data da Visita</label><input type="date" id="data"></div>
+    <div class="input-group"><label>Preço Diária por Pessoa (R$)</label><input type="text" id="preco" placeholder="Ex: 50.00"></div>
+    <div class="input-group"><label>Link do Vídeo no YouTube</label><input type="url" id="youtube" placeholder="https://youtube.com/..."></div>
+  </div>
+  
+  <div class="section-title">🚌 1. Acessibilidade e Manobra <span>Peso 10</span></div>
+  <div class="card">
+    <label class="chk-item"><span class="chk-label">Altura Livre: Entrada livre de galhos baixos ou fios que raspem no trailer?</span><input type="checkbox" class="nota-chk" data-bloco="acessibilidade" data-item="altura"><div class="chk-box"></div></label>
+    <label class="chk-item"><span class="chk-label">Largura e Curvas: Vias internas permitem o raio de giro sem manobras complexas?</span><input type="checkbox" class="nota-chk" data-bloco="acessibilidade" data-item="manobra"><div class="chk-box"></div></label>
+    <label class="chk-item"><span class="chk-label">Qualidade do Piso: Solo firme e plano nas vagas, sem risco de atolamento?</span><input type="checkbox" class="nota-chk" data-bloco="acessibilidade" data-item="piso"><div class="chk-box"></div></label>
+  </div>
+  
+  <div class="section-title">⚡ 2. Infraestrutura Elétrica <span>Peso 10</span></div>
+  <div class="card">
+    <label class="chk-item"><span class="chk-label">Tensão Estável: Tomada entrega 220v estável antes de ligar o trailer?</span><input type="checkbox" class="nota-chk" data-bloco="eletrica" data-item="tensao"><div class="chk-box"></div></label>
+    <label class="chk-item"><span class="chk-label">Teste de Carga: Sustenta Ar-Condicionado de 9000 BTUs Inverter sem cair queda brusca?</span><input type="checkbox" class="nota-chk" data-bloco="eletrica" data-item="carga"><div class="chk-box"></div></label>
+    <label class="chk-item"><span class="chk-label">Aterramento Real: Teste físico na tomada confirma aterramento real?</span><input type="checkbox" class="nota-chk" data-bloco="eletrica" data-item="terra"><div class="chk-box"></div></label>
+    <label class="chk-item"><span class="chk-label">Conservação: Totens elétricos protegidos e a menos de 15m da vaga?</span><input type="checkbox" class="nota-chk" data-bloco="eletrica" data-item="conservacao"><div class="chk-box"></div></label>
+  </div>
+  
+  <div class="section-title">💧 3. Estrutura Hidráulica e Banheiros <span>Peso 7.5</span></div>
+  <div class="card">
+    <label class="chk-item"><span class="chk-label">Escoamento do Box: Inclinação correta impede a água de invadir a zona seca?</span><input type="checkbox" class="nota-chk" data-bloco="hidraulica" data-item="box"><div class="chk-box"></div></label>
+    <label class="chk-item"><span class="chk-label">Suportes Operacionais: Presença de ganchos e suportes firmes para roupas/necessaire?</span><input type="checkbox" class="nota-chk" data-bloco="hidraulica" data-item="suportes"><div class="chk-box"></div></label>
+    <label class="chk-item"><span class="chk-label">Pressão e Temperatura: Chuveiro com ótima pressão d'água e constância térmica?</span><input type="checkbox" class="nota-chk" data-bloco="hidraulica" data-item="pressao"><div class="chk-box"></div></label>
+  </div>
+  
+  <div class="section-title">📝 Observações</div>
+  <div class="card">
+    <div class="input-group"><textarea id="obs" rows="3" placeholder="Insira detalhes técnicos adicionais aqui..."></textarea></div>
+  </div>
+  
+  <div class="section-title">⛺ Campings Já Auditados</div>
+  <div id="lista-campings"></div>
+</div>
+
+<div class="floating-score">
+  <div class="info"><p>Score Técnico</p><h2 id="score-val">0.00</h2></div>
+  <div class="action"><button class="btn" onclick="salvarCamping()">💾 Publicar</button></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = { databaseURL: "https://guiaexkombeiros-default-rtdb.firebaseio.com/" };
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+document.querySelectorAll('.nota-chk').forEach(c => c.addEventListener('change', calcularScore));
+
+function calcNotaFinal(n) {
+  let obtido = 0;
+  if(n.acessibilidade.altura) obtido += 10;
+  if(n.acessibilidade.manobra) obtido += 10;
+  if(n.acessibilidade.piso) obtido += 10;
+  if(n.eletrica.tensao) obtido += 10;
+  if(n.eletrica.carga) obtido += 10;
+  if(n.eletrica.terra) obtido += 10;
+  if(n.eletrica.conservacao) obtido += 10;
+  if(n.hidraulica.box) obtido += 7.5;
+  if(n.hidraulica.suportes) obtido += 7.5;
+  if(n.hidraulica.pressao) obtido += 7.5;
+  return (obtido / 92.5) * 10;
+}
+
+function calcularScore() {
+  let n = obterNotasTela();
+  document.getElementById('score-val').innerText = calcNotaFinal(n).toFixed(2);
+}
+
+function obterNotasTela() {
+  return {
+    acessibilidade: {
+      altura: document.querySelector('[data-item="altura"]').checked,
+      manobra: document.querySelector('[data-item="manobra"]').checked,
+      piso: document.querySelector('[data-item="piso"]').checked
+    },
+    eletrica: {
+      tensao: document.querySelector('[data-item="tensao"]').checked,
+      carga: document.querySelector('[data-item="carga"]').checked,
+      terra: document.querySelector('[data-item="terra"]').checked,
+      conservacao: document.querySelector('[data-item="conservacao"]').checked
+    },
+    hidraulica: {
+      box: document.querySelector('[data-item="box"]').checked,
+      suportes: document.querySelector('[data-item="suportes"]').checked,
+      pressao: document.querySelector('[data-item="pressao"]').checked
+    }
+  };
+}
+
+function toast(msg) {
+  let t = document.getElementById('toast');
+  t.innerText = msg; t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 2500);
+}
+
+window.salvarCamping = async function() {
+  let n = document.getElementById('nome').value.trim();
+  let c = document.getElementById('cidade').value.trim();
+  if(!n || !c) return toast('⚠️ Digite o Nome e a Cidade!');
+  
+  let notas = obterNotasTela();
+  let sc = calcNotaFinal(notas);
+  
+  let dados = {
+    nome: n, cidade: c,
+    data: document.getElementById('data').value,
+    preco: document.getElementById('preco').value.trim(),
+    score: parseFloat(sc.toFixed(2)),
+    notas,
+    obs: document.getElementById('obs').value.trim(),
+    youtube: document.getElementById('youtube').value.trim() || null,
+    criadoEm: new Date().toISOString()
+  };
+  
+  await push(ref(db, 'campings'), dados);
+  toast('✅ Auditoria publicada com sucesso!');
+  location.reload();
+}
+
+onValue(ref(db, 'campings'), (snapshot) => {
+  let container = document.getElementById('lista-campings');
+  container.innerHTML = '';
+  if(!snapshot.exists()) return;
+  let dados = snapshot.val();
+  Object.keys(dados).forEach(key => {
+    let item = dados[key];
+    container.innerHTML += `<div class="list-item">
+      <div class="list-item-info"><h4>${item.nome}</h4><p>${item.cidade || ''}</p></div>
+      <div class="list-item-score">${parseFloat(item.score).toFixed(1)}</div>
+    </div>`;
+  });
+});
+</script>
+</body>
+</html>
 
