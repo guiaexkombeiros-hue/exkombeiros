@@ -326,28 +326,4 @@ carregar();
 </script>
 </body>
 </html>
-function ir(t){
-  document.getElementById('tela-ficha').classList.toggle('hidden',t!=='ficha');
-  document.getElementById('tela-lista').classList.toggle('hidden',t!=='lista');
-  document.querySelectorAll('.nav-btn').forEach((b,i)=>{
-    b.classList.toggle('ativo',(t==='ficha'&&i===0)||(t==='lista'&&i===1));
-  });
-  if(t==='lista')carregar();
-}
-
-function novaAvaliacao(){
-  limpar();
-  ir('ficha');
-}
-
-function toast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2000);
-}
-
-carregar();
-</script>
-</body>
-</html>
 
