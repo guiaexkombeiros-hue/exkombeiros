@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia Exkombeiros - Ranking de Campings</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {--verde:#1a3a2a; --ouro:#c8a84b; --creme:#f5f0e8;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#e8e2d8;}
+.topo{background:var(--verde);color:var(--creme);padding:40px 20px;text-align:center;}
+.topo h1{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;}
+.topo h1 em{color:var(--ouro);}
+.container{max-width:800px;margin:0 auto;padding:20px;}
+.card{background:white;border-radius:12px;box-shadow:0 2px 16px rgba(0,0,0,0.10);margin-bottom:12px;padding:16px;display:flex;align-items:center;gap:16px;}
+.pos{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--ouro);min-width:40px;}
+.info{flex:1;}
+.nome{font-weight:600;font-size:16px;color:var(--verde);}
+.cidade{font-size:12px;color:#8a8a7a;}
+.score{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--verde);}
+.vazio{text-align:center;padding:60px 20px;color:#aaa;}
+</style>
+</head>
+<body>
+<div class="topo">
+  <h1>Guia <em>Exkombeiros</em></h1>
+  <p style="letter-spacing:2px;font-size:11px;margin-top:8px;">RANKING OFICIAL DE CAMPINGS DO BRASIL</p>
+</div>
+<div class="container" id="lista">
+  <div class="vazio">Carregando campings...</div>
+</div>
+<script>
+const firebaseConfig = {
+  databaseURL: "https://exkombeiros-24a9a-default-rtdb.firebaseio.com"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// LÊ SÓ DA PASTA CAMPINGS
+db.ref('campings').on('value', (snap) => {
+  const dados = snap.val();
+  const lista = document.getElementById('lista');
+  if(!dados) {
+    lista.innerHTML = '<div class="vazio">Nenhum camping avaliado ainda 🏕️</div>';
+    return;
+  }
+  
+  const arr = Object.values(dados).sort((a,b) => {
+    const notaA = parseFloat(a.nota || a.score || 0);
+    const notaB = parseFloat(b.nota || b.score || 0);
+    return notaB - notaA;
+  });
+  
+  lista.innerHTML = '';
+  
+  arr.forEach((c, i) => {
+    const notaFinal = parseFloat(c.nota || c.score || 0).toFixed(1);
+    const nomeCamping = c.nome || 'Sem nome';
+    const cidadeCamping = c.cidade || '';
+    
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = `
+      <div class="pos">${i+1}º</div>
+      <div class="info">
+        <div class="nome">${nomeCamping}</div>
+        <div class="cidade">${cidadeCamping}</div>
+      </div>
+      <div class="score">${notaFinal}</div>
+    `;
+    lista.appendChild(div);
+  });
+});
+</script>
+</body>
+</html>
