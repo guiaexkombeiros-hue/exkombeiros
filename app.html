@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App Exkombeiros</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --verde:#1a3a2a; --verde-m:#2d5a3d; --verde-c:#4a8c5c;
+  --ouro:#c8a84b; --ouro-c:#e8c96b;
+  --creme:#f5f0e8; --cinza:#8a8a7a; --txt:#1a1a14;
+  --ok:#27ae60; --warn:#e67e22; --bad:#c0392b;
+  --radius:12px; --shadow:0 2px 16px rgba(0,0,0,0.10);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:#e8e2d8;font-family:'DM Sans',sans-serif;color:var(--txt);}
+#nav{position:fixed;bottom:0;left:0;right:0;background:var(--verde);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom);}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px 8px;color:rgba(245,240,232,0.5);font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:color .2s;gap:3px;border:none;background:none;}
+.nav-btn .ni{font-size:20px;}
+.nav-btn.ativo{color:var(--ouro);}
+.screen{display:none;position:fixed;top:0;left:0;right:0;bottom:60px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.screen.ativo{display:block;}
+.topo{background:var(--verde);color:var(--creme);padding:52px 20px 20px;position:sticky;top:0;z-index:10;}
+.topo-badge{display:inline-block;border:1px solid var(--ouro);color:var(--ouro);font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:3px 10px;margin-bottom:10px;border-radius:2px;}
+.topo h1{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;line-height:1.1;}
+.topo h1 em{color:var(--ouro);}
+.pad{padding:16px;}
+.card{background:white;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden;}
+.card-head{background:var(--verde);color:var(--creme);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;}
+.card-nome{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;}
+.id-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px;}
+.id-campo{display:flex;flex-direction:column;gap:4px;}
+.id-campo.full{grid-column:1/-1;}
+.id-label{font-size:10px;color:var(--cinza);letter-spacing:1px;text-transform:uppercase;}
+.id-input{border:none;border-bottom:1px solid #ddd;background:transparent;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--txt);padding:5px 0;outline:none;width:100%;}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 24px;}
+.btn{padding:14px;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:.5px;cursor:pointer;transition:background .2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.btn-verde{background:var(--verde-c);color:white;}
+.btn-ouro{background:var(--ouro);color:var(--verde);}
+.btn-full{grid-column:1/-1;background:var(--verde);color:var(--creme);}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--verde);color:var(--creme);padding:10px 18px;border-radius:20px;font-size:12px;opacity:0;transition:opacity .3s;z-index:200;}
+.toast.show{opacity:1;}
+#canvas-arte{max-width:100%;border-radius:8px;background:#1a3a2a;}
+.score-box{background:var(--verde);margin:0 16px 16px;border-radius:var(--radius);padding:20px;display:flex;align-items:center;justify-content:space-between;}
+.score-num{font-family:'Playfair Display',serif;font-size:40px;font-weight:900;color:var(--ouro);line-height:1;}
+</style>
+</head>
+<body>
+<div class="screen ativo" id="screen-avaliar">
+  <div class="topo">
+    <div class="topo-badge">EXKOMBEIROS</div>
+    <h1>Guia de <em>Camping</em></h1>
+    <p>AVALIAÇÃO TÉCNICA</p>
+  </div>
+  <div class="pad">
+    <div class="card">
+      <div class="card-head"><div class="card-nome">Identificação</div></div>
+      <div class="id-grid">
+        <div class="id-campo full"><label class="id-label">Nome do Camping</label><input type="text" class="id-input" id="d-nome"></div>
+        <div class="id-campo"><label class="id-label">Cidade/UF</label><input type="text" class="id-input" id="d-cidade"></div>
+        <div class="id-campo"><label class="id-label">Data</label><input type="date" class="id-input" id="d-data"></div>
+      </div>
+    </div>
+    <div class="score-box">
+      <div class="score-left"><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--ouro);margin-bottom:4px;">SCORE FINAL</div></div>
+      <div class="score-num" id="score-num">0.0</div>
+    </div>
+    <div class="btns">
+      <button class="btn btn-verde" onclick="salvarFirebase()">💾 Salvar Avaliação</button>
+      <button class="btn btn-ouro" onclick="abrirRelatorio()">📧 Gerar Relatório</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-arte">
+  <div class="topo">
+    <div class="topo-badge">EXKOMBEIROS</div>
+    <h1>Arte para <em>Instagram</em></h1>
+    <p>GERAR CARD 1080x1080</p>
+  </div>
+  <div class="pad">
+    <div class="card">
+      <div class="card-head"><div class="card-nome">Preview da Arte</div></div>
+      <div class="card-body" style="text-align:center">
+        <canvas id="canvas-arte" width="1080" height="1080"></canvas>
+        <div class="btns" style="margin-top:12px">
+          <button class="btn btn-ouro" onclick="gerarArte()">🖼️ Gerar Arte</button>
+          <button class="btn btn-verde" onclick="baixarArte()">⬇️ Baixar PNG</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="nav">
+  <button class="nav-btn ativo" data-screen="avaliar"><span class="ni">📋</span><span>Avaliar</span></button>
+  <button class="nav-btn" data-screen="arte"><span class="ni">🎨</span><span>Arte</span></button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── FIREBASE ──
+const firebaseConfig = {
+  databaseURL: "https://exkombeiros-24a9a-default-rtdb.firebaseio.com"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ── NAV ──
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('ativo'));
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('ativo'));
+    btn.classList.add('ativo');
+    document.getElementById('screen-' + btn.dataset.screen).classList.add('ativo');
+  }
+});
+
+// ── SALVAR ──
+function salvarFirebase() {
+  const nome = document.getElementById('d-nome').value;
+  if(!nome) { toast('Coloca o nome do camping!'); return; }
+  
+  const dados = {
+    nome: nome,
+    cidade: document.getElementById('d-cidade').value,
+    data: document.getElementById('d-data').value,
+    score: parseFloat(document.getElementById('score-num').textContent) || 0,
+    dataCriacao: new Date().toISOString()
+  };
+  
+  db.ref('campings').push(dados).then(() => {
+    toast('✅ Salvo! Já aparece no site público');
+  }).catch(() => toast('Erro ao salvar'));
+}
+
+// ── ARTE INSTAGRAM ──
+function gerarArte() {
+  const canvas = document.getElementById('canvas-arte');
+  const ctx = canvas.getContext('2d');
+  const nome = document.getElementById('d-nome').value || 'Camping';
+  const cidade = document.getElementById('d-cidade').value || '';
+  const score = document.getElementById('score-num').textContent;
+  
+  ctx.fillStyle = '#1a3a2a';
+  ctx.fillRect(0, 0, 1080);
+  ctx.strokeStyle = '#c8a84b';
+  ctx.lineWidth = 8;
+  ctx.strokeRect(40, 40, 1000, 1000);
+  ctx.fillStyle = '#c8a84b';
+  ctx.font = '900 60px Playfair Display';
+  ctx.textAlign = 'center';
+  ctx.fillText('GUIA EXKOMBEIROS', 540, 150);
+  ctx.fillStyle = '#f5f0e8';
+  ctx.font = '700 80px Playfair Display';
+  ctx.fillText(nome, 540, 300, 900);
+  if(cidade) {
+    ctx.font = '300 40px DM Sans';
+    ctx.fillText(cidade, 540, 360);
+  }
+  ctx.fillStyle = '#c8a84b';
+  ctx.font = '900 300px Playfair Display';
+  ctx.fillText(score, 540, 700);
+  ctx.font = '600 50px DM Sans';
+  ctx.fillStyle = '#f5f0e8';
+  ctx.fillText('/ 5.0', 540, 770);
+  const n = Math.round(parseFloat(score) || 0);
+  const est = '★'.repeat(n) + '☆'.repeat(5-n);
+  ctx.font = '80px Arial';
+  ctx.fillStyle = '#e8c96b';
+  ctx.fillText(est, 540, 880);
+  ctx.font = '400 35px DM Sans';
+  ctx.fillStyle = '#f5f0e8';
+  ctx.fillText('@exkombeiros', 540, 1000);
+  toast('Arte gerada! Clica em Baixar PNG');
+}
+
+function baixarArte() {
+  const canvas = document.getElementById('canvas-arte');
+  const link = document.createElement('a');
+  const nome = document.getElementById('d-nome').value || 'camping';
+  link.download = `exkombeiros-${nome.toLowerCase().replace(/\s/g,'-')}.png`;
+  link.href = canvas.toDataURL();
+  link.click();
+  toast('PNG baixado!');
+}
+
+// ── RELATÓRIO ──
+function abrirRelatorio() {
+  const nome = document.getElementById('d-nome').value || 'Camping';
+  const cidade = document.getElementById('d-cidade').value || '';
+  const score = document.getElementById('score-num').textContent;
+  
+  const texto = `Prezada equipe do ${nome}${cidade ? ' — ' + cidade : ''},
+
+Sou Rogério, do Guia Exkombeiros de Camping, canal dedicado a viajantes com trailers, motorhomes e vans.
+
+Realizei uma visita técnica e compartilho o resultado:
+
+Score Técnico Final: ${score} / 5.0
+
+Caso o camping realize melhorias, faremos uma reavaliação gratuita para atualizar a pontuação no guia.
+
+Atenciosamente,
+Rogério e Viviane
+Guia Exkombeiros de Camping
+YouTube · Instagram · TikTok: @exkombeiros`;
+
+  navigator.clipboard.writeText(texto).then(() => toast('📋 Relatório copiado! Cola no WhatsApp'));
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
