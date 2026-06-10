@@ -1,0 +1,695 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="color-scheme" content="light">
+  <title>Ranking de Campings - Guia Exkombeiros</title>
+  
+  <!-- Fontes Elegantes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Reset Geral e Base */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html, body {
+      background-color: #eae6df !important;
+      color: #1b3d2f !important;
+      min-height: 100vh;
+    }
+    body {
+      padding-bottom: 90px;
+      line-height: 1.4;
+    }
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    /* Header Principal */
+    header {
+      background-color: #1b3d2f !important;
+      color: #ffffff !important;
+      padding: 24px 16px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border-bottom: 2px solid #d4af37;
+    }
+    header h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 24px;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    header h1 span {
+      color: #d4af37 !important;
+      font-style: italic;
+    }
+    header p {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #a3bdae !important;
+      margin-top: 4px;
+    }
+
+    /* Grid de Estatísticas */
+    .stats-container {
+      display: grid;
+      grid-template-cols: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.15);
+    }
+    .stat-box {
+      text-align: center;
+    }
+    .stat-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #a3bdae !important;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .stat-val {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #d4af37 !important;
+    }
+
+    /* Barra de Pesquisa Sem Sobreposições */
+    .search-card {
+      position: relative !important;
+      z-index: 10;
+      background-color: #ffffff !important;
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .search-field {
+      width: 100%;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      color: #1b3d2f !important;
+      background: transparent;
+    }
+
+    /* Cartão de Item de Camping */
+    .camping-block {
+      background-color: #ffffff !important;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 15px rgba(27,61,47,0.06);
+      cursor: pointer;
+    }
+    .camping-img {
+      height: 180px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .score-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background-color: #1b3d2f !important;
+      color: #d4af37 !important;
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .camping-details {
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .camping-name {
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #1b3d2f !important;
+    }
+    .camping-location {
+      font-size: 12px;
+      color: #6b7280 !important;
+      margin-top: 2px;
+    }
+    .camping-pricing {
+      text-align: right;
+    }
+    .pricing-lbl {
+      font-size: 9px;
+      text-transform: uppercase;
+      color: #9ca3af !important;
+      letter-spacing: 0.5px;
+    }
+    .pricing-val {
+      font-size: 14px;
+      font-weight: 700;
+      color: #0f5132 !important;
+    }
+
+    /* Visualização da Ficha */
+    .btn-return {
+      background-color: #ffffff !important;
+      color: #1b3d2f !important;
+      border: none;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .profile-card {
+      background-color: #ffffff !important;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(27,61,47,0.1);
+    }
+    .profile-banner {
+      height: 220px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .profile-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
+    }
+    .profile-title-container {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      color: #ffffff !important;
+    }
+    .profile-title-container h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .profile-title-container p {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      color: #d4af37 !important;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .profile-content {
+      padding: 20px;
+    }
+    .profile-specs-header {
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #1b3d2f !important;
+      border-bottom: 2px solid #eae6df;
+      padding-bottom: 6px;
+      margin-top: 16px;
+      margin-bottom: 12px;
+    }
+    .tech-spec-box {
+      background-color: #f9f8f6 !important;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .tech-spec-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #1b3d2f !important;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .tech-spec-grid {
+      display: grid;
+      grid-template-cols: 1fr 1fr;
+      gap: 10px;
+      font-size: 12px;
+      color: #4b5563 !important;
+    }
+    .tech-spec-val {
+      font-weight: 600;
+      color: #1b3d2f !important;
+    }
+
+    /* Classificação de Ranking */
+    .rank-card {
+      background-color: #ffffff !important;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(27,61,47,0.06);
+    }
+    .rank-header {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      font-weight: 700;
+      border-bottom: 1px solid #eae6df;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .rank-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .rank-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background-color: #f9f8f6 !important;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .rank-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .gold-1 { background-color: #fef3c7 !important; color: #b45309 !important; }
+    .silver-2 { background-color: #f1f5f9 !important; color: #475569 !important; }
+    .bronze-3 { background-color: #ffedd5 !important; color: #ea580c !important; }
+    .normal-rank { background-color: #e5e7eb !important; color: #4b5563 !important; }
+    
+    .rank-name-txt {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 700;
+      color: #1b3d2f !important;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .rank-score-txt {
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #1b3d2f !important;
+    }
+
+    /* Abas de Navegação Inferior */
+    nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #1b3d2f !important;
+      border-top: 1px solid #2d5a44;
+      padding: 12px 0;
+      z-index: 100;
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.15);
+    }
+    .nav-wrapper {
+      display: grid;
+      grid-template-cols: repeat(3, 1fr);
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .nav-btn {
+      background: none;
+      border: none;
+      color: #9ca3af !important;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.15s;
+    }
+    .nav-btn.active {
+      color: #d4af37 !important;
+      font-weight: 700;
+    }
+    .nav-btn-icon {
+      font-size: 20px;
+    }
+    .nav-btn-text {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cabeçalho Principal -->
+  <header>
+    <div class="container" style="padding: 0;">
+      <h1>Ranking de <span>Campings</span></h1>
+      <p>Comunidade Exkombeiros</p>
+      
+      <!-- Contadores Administrativos -->
+      <div class="stats-container">
+        <div class="stat-box">
+          <span class="stat-label">Total</span>
+          <span id="stat-campings" class="stat-val">0</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Média Geral</span>
+          <span id="stat-score" class="stat-val">0.0</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Estados</span>
+          <span id="stat-estados" class="stat-val">0</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Telas do Aplicativo -->
+  <main class="container">
+    
+    <!-- TELA 1: INÍCIO (Lista e Busca) -->
+    <section id="tela-inicio">
+      <div class="search-card">
+        <span>🔍</span>
+        <input type="text" id="busca-input" oninput="filtrarCampings()" placeholder="Procurar por nome ou localidade..." class="search-field">
+      </div>
+
+      <div id="lista-campings">
+        <div style="text-align: center; padding: 40px; color: #6b7280;">Carregando dados da nuvem...</div>
+      </div>
+    </section>
+
+    <!-- TELA 2: FICHA DETALHADA -->
+    <section id="tela-ficha" class="hidden">
+      <button onclick="mudarTela('inicio')" class="btn-return">
+        ← Voltar à Lista
+      </button>
+
+      <div id="detalhe-container">
+        <div style="text-align: center; padding: 40px; color: #6b7280;">Escolha um camping na lista para exibir seus detalhes.</div>
+      </div>
+    </section>
+
+    <!-- TELA 3: RANKING -->
+    <section id="tela-ranking" class="hidden">
+      <div class="rank-card">
+        <h2 class="rank-header"><span>🏆</span> Classificação Oficial</h2>
+        <div id="rank-list" class="rank-list">
+          <!-- Inserido via Firebase -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Menu do Rodapé -->
+  <nav>
+    <div class="nav-wrapper">
+      <button onclick="mudarTela('inicio')" id="btn-inicio" class="nav-btn active">
+        <span class="nav-btn-icon">🏕️</span>
+        <span class="nav-btn-text">Início</span>
+      </button>
+      <button onclick="mudarTela('ficha')" id="btn-ficha" class="nav-btn">
+        <span class="nav-btn-icon">📋</span>
+        <span class="nav-btn-text">Ficha</span>
+      </button>
+      <button onclick="mudarTela('ranking')" id="btn-ranking" class="nav-btn">
+        <span class="nav-btn-icon">🏆</span>
+        <span class="nav-btn-text">Ranking</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Script Firebase Realtime Segurado -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+    // Modifique com as suas credenciais oficiais do console Firebase
+    const firebaseConfig = {
+      apiKey: "COLE_AQUI_SUA_API_KEY",
+      authDomain: "COLE_AQUI_SEU_AUTH_DOMAIN",
+      databaseURL: "COLE_AQUI_SUA_DATABASE_URL",
+      projectId: "COLE_AQUI_SEU_PROJECT_ID",
+      storageBucket: "COLE_AQUI_SEU_STORAGE_BUCKET",
+      messagingSenderId: "COLE_AQUI_SEU_SENDER_ID",
+      appId: "COLE_AQUI_SEU_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const dbRef = ref(db, 'campings');
+
+    window.campingsCache = [];
+
+    // Carregamento e Monitoramento em Tempo Real
+    onValue(dbRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        window.campingsCache = Object.keys(data).map(key => ({
+          id: key,
+          ...data[key]
+        }));
+        
+        atualizarContadores();
+        renderizarInicio();
+        renderizarRanking();
+      } else {
+        document.getElementById('lista-campings').innerHTML = `
+          <div style="text-align: center; padding: 40px; color: #6b7280;">Nenhum camping registrado de momento.</div>
+        `;
+        document.getElementById('rank-list').innerHTML = `
+          <div style="text-align: center; padding: 20px; color: #6b7280;">Sem classificação de momento.</div>
+        `;
+      }
+    });
+
+    function atualizarContadores() {
+      const campings = window.campingsCache;
+      const total = campings.length;
+      const sum = campings.reduce((acc, curr) => acc + (parseFloat(curr.nota) || 0), 0);
+      const media = total > 0 ? (sum / total).toFixed(1) : "0.0";
+      const estadosUnicos = new Set(campings.map(c => c.estado?.toUpperCase())).size;
+
+      document.getElementById('stat-campings').innerText = total;
+      document.getElementById('stat-score').innerText = media;
+      document.getElementById('stat-estados').innerText = estadosUnicos;
+    }
+
+    // Compartilhar as funções de navegação globais
+    window.mudarTela = mudarTela;
+    window.filtrarCampings = filtrarCampings;
+    window.abrirFicha = abrirFicha;
+  </script>
+
+  <!-- Lógica de Controle da Interface do Utilizador -->
+  <script>
+    function mudarTela(telaId) {
+      document.getElementById('tela-inicio').classList.add('hidden');
+      document.getElementById('tela-ficha').classList.add('hidden');
+      document.getElementById('tela-ranking').classList.add('hidden');
+
+      document.getElementById('btn-inicio').classList.remove('active');
+      document.getElementById('btn-ficha').classList.remove('active');
+      document.getElementById('btn-ranking').classList.remove('active');
+
+      document.getElementById(`tela-${telaId}`).classList.remove('hidden');
+      document.getElementById(`btn-${telaId}`).classList.add('active');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderizarInicio(filtrados = null) {
+      const items = filtrados || window.campingsCache;
+      const container = document.getElementById('lista-campings');
+
+      if (!items || items.length === 0) {
+        container.innerHTML = `<div style="text-align: center; padding: 40px; color: #6b7280;">Nenhum resultado para a pesquisa.</div>`;
+        return;
+      }
+
+      container.innerHTML = items.map(c => `
+        <div class="camping-block" onclick="abrirFicha('${c.id}')">
+          <div class="camping-img" style="background-image: url('${c.foto}')">
+            <div class="score-badge">★ ${parseFloat(c.nota).toFixed(1)}</div>
+          </div>
+          <div class="camping-details">
+            <div>
+              <h3 class="camping-name">${c.nome}</h3>
+              <p class="camping-location">📍 ${c.cidade} - ${c.estado}</p>
+            </div>
+            <div class="camping-pricing">
+              <span class="pricing-lbl">Diária</span>
+              <span class="pricing-val">R$ ${c.preco ? parseFloat(c.preco).toFixed(2) : '---'}</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filtrarCampings() {
+      const valor = document.getElementById('busca-input').value.toLowerCase().trim();
+      if (!valor) {
+        renderizarInicio();
+        return;
+      }
+
+      const filtrados = window.campingsCache.filter(c => 
+        c.nome.toLowerCase().includes(valor) || 
+        c.cidade.toLowerCase().includes(valor) || 
+        c.estado.toLowerCase().includes(valor)
+      );
+      renderizarInicio(filtrados);
+    }
+
+    function renderizarRanking() {
+      const ordenados = [...window.campingsCache].sort((a, b) => (b.nota || 0) - (a.nota || 0));
+      const container = document.getElementById('rank-list');
+
+      container.innerHTML = ordenados.map((c, index) => {
+        let badgeClass = 'normal-rank';
+        if (index === 0) badgeClass = 'gold-1';
+        if (index === 1) badgeClass = 'silver-2';
+        if (index === 2) badgeClass = 'bronze-3';
+
+        return `
+          <div class="rank-row" onclick="abrirFicha('${c.id}')">
+            <span class="rank-badge ${badgeClass}">${index + 1}º</span>
+            <span class="rank-name-txt">${c.nome} <span style="font-size: 11px; color:#6b7280; font-weight: normal;">(${c.cidade} - ${c.estado})</span></span>
+            <span class="rank-score-txt">${parseFloat(c.nota).toFixed(1)}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function abrirFicha(id) {
+      const camping = window.campingsCache.find(c => c.id === id);
+      if (!camping) return;
+
+      const container = document.getElementById('detalhe-container');
+      container.innerHTML = `
+        <div class="profile-card">
+          <!-- Banner -->
+          <div class="profile-banner" style="background-image: url('${camping.foto}')">
+            <div class="profile-overlay"></div>
+            <div class="profile-title-container">
+              <p>${camping.cidade} - ${camping.estado}</p>
+              <h2>${camping.nome}</h2>
+            </div>
+            <div class="score-badge" style="top:16px; right:16px;">★ ${parseFloat(camping.nota).toFixed(1)}</div>
+          </div>
+
+          <!-- Conteúdo -->
+          <div class="profile-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eae6df; padding-bottom:12px; margin-bottom:12px;">
+              <div>
+                <span class="pricing-lbl" style="display:block;">Preço Estimado</span>
+                <span class="pricing-val" style="font-size:18px;">R$ ${camping.preco ? parseFloat(camping.preco).toFixed(2) : 'Sob consulta'}</span>
+              </div>
+              <span style="font-size:11px; color:#0f5132; background-color:#d1e7dd; padding:6px 12px; border-radius:20px; font-weight:700;">✓ Verificado</span>
+            </div>
+
+            <h3 class="profile-specs-header">Infraestrutura Técnica</h3>
+
+            <!-- Energia -->
+            <div class="tech-spec-box">
+              <span class="tech-spec-title">⚡ Energia Elétrica</span>
+              <div class="tech-spec-grid">
+                <div>Tensão: <span class="tech-spec-val">${camping.energia_tensao || 'N/A'}</span></div>
+                <div>Estabilidade: <span class="tech-spec-val">${camping.energia_estabilidade || 'N/A'}</span></div>
+                <div style="grid-column: span 2;">Amperagem: <span class="tech-spec-val">${camping.energia_amperagem || 'N/A'}</span></div>
+              </div>
+            </div>
+
+            <!-- Banheiros -->
+            <div class="tech-spec-box">
+              <span class="tech-spec-title">🚿 Banheiros & Chuveiro</span>
+              <div class="tech-spec-grid">
+                <div>Área Seca: <span class="tech-spec-val">${camping.banheiro_seco || 'N/A'}</span></div>
+                <div>Proporção: <span class="tech-spec-val">${camping.banheiro_proporcao || 'N/A'}</span></div>
+                <div>Água Quente: <span class="tech-spec-val">${camping.banheiro_quente || 'N/A'}</span></div>
+                <div>Limpeza: <span class="tech-spec-val">${camping.banheiro_limpeza || 'N/A'}</span></div>
+              </div>
+            </div>
+
+            <!-- Acesso -->
+            <div class="tech-spec-box">
+              <span class="tech-spec-title">🚗 Estrada e Acesso</span>
+              <div class="tech-spec-grid">
+                <div>Estrada: <span class="tech-spec-val">${camping.acesso_estrada || 'N/A'}</span></div>
+                <div>Trailer: <span class="tech-spec-val">${camping.acesso_trailer || 'N/A'}</span></div>
+                <div style="grid-column: span 2;">Terreno: <span class="tech-spec-val">${camping.acesso_nivel || 'N/A'}</span></div>
+              </div>
+            </div>
+
+            <!-- Conectividade -->
+            <div class="tech-spec-box">
+              <span class="tech-spec-title">📶 Conectividade</span>
+              <div class="tech-spec-grid">
+                <div>Sinal Celular: <span class="tech-spec-val">${camping.conec_sinal || 'N/A'}</span></div>
+                <div>Wi-Fi: <span class="tech-spec-val">${camping.conec_wifi || 'N/A'}</span></div>
+              </div>
+            </div>
+
+            <!-- Cozinha e Outros -->
+            <div class="tech-spec-box">
+              <span class="tech-spec-title">🍳 Cozinha & Serviços</span>
+              <div class="tech-spec-grid">
+                <div>Cozinha: <span class="tech-spec-val">${camping.cozinha_geral || 'N/A'}</span></div>
+                <div>Lixo: <span class="tech-spec-val">${camping.infra_lixo || 'N/A'}</span></div>
+                <div style="grid-column: span 2;">Segurança: <span class="tech-spec-val">${camping.infra_seguranca || 'N/A'}</span></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      `;
+
+      mudarTela('ficha');
+    }
+  </script>
+</body>
+</html>
+
+```
