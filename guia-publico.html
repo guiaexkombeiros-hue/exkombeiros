@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Exkombeiros">
+<title>Guia Exkombeiros de Camping</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--v:#1a3a2a;--vm:#2d5a3d;--vc:#4a8c5c;--o:#c8a84b;--cr:#f5f0e8;--cz:#8a8a7a;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:#e8e2d8;font-family:'DM Sans',sans-serif;color:#1a1a14;}
+.hero{background:var(--v);color:var(--cr);padding:52px 22px 28px;position:relative;overflow:hidden;}
+.hero:before{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;border-radius:50%;border:1px solid rgba(200,168,75,.1);}
+.lw{display:flex;align-items:center;gap:12px;margin-bottom:14px;position:relative;}
+.li{width:70px;height:70px;object-fit:contain;border-radius:50%;background:#fff;padding:3px;box-shadow:0 2px 10px rgba(0,0,0,.3);flex-shrink:0;}
+.badge{display:inline-block;border:1px solid var(--o);color:var(--o);font-size:9px;letter-spacing:3px;text-transform:uppercase;padding:3px 10px;margin-bottom:6px;border-radius:2px;}
+.hero h1{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;line-height:1.1;}
+.hero h1 em{color:var(--o);}
+.hero p{font-size:11px;color:rgba(245,240,232,.5);line-height:1.6;margin:8px 0 16px;}
+.stats{display:flex;gap:18px;}
+.sn{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--o);line-height:1;}
+.sl{font-size:9px;color:rgba(245,240,232,.4);letter-spacing:1px;text-transform:uppercase;margin-top:1px;}
+.sobre{background:#fff;padding:14px 22px;border-bottom:2px solid var(--o);font-size:12px;color:#666;line-height:1.6;}
+.sobre strong{color:var(--v);}
+.inst{background:#fffbea;padding:10px 18px;display:flex;align-items:center;gap:10px;border-top:2px solid var(--o);}
+.inst h4{font-size:11px;font-weight:600;color:var(--v);}
+.inst p{font-size:10px;color:#888;}
+.busca{padding:10px 18px;background:#fff;border-bottom:1px solid #eee;position:sticky;top:0;z-index:50;box-shadow:0 2px 6px rgba(0,0,0,.06);}
+.bi{width:100%;border:1px solid #ddd;border-radius:22px;padding:9px 14px;font-family:'DM Sans',sans-serif;font-size:13px;outline:none;background:#f9f9f9;}
+.bi:focus{border-color:var(--vc);background:#fff;}
+.filtros{padding:10px 18px;display:flex;gap:7px;overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--cr);}
+.filtros::-webkit-scrollbar{display:none;}
+.fb{flex-shrink:0;padding:7px 14px;border-radius:18px;border:1px solid #ddd;background:#fff;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:#888;cursor:pointer;white-space:nowrap;}
+.fb.on{background:var(--v);color:var(--o);border-color:var(--v);}
+.rank{padding:12px 18px 80px;}
+.rt{font-size:11px;color:var(--cz);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;font-family:'Playfair Display',serif;}
+.card{background:#fff;border-radius:12px;box-shadow:0 2px 14px rgba(0,0,0,.07);margin-bottom:10px;overflow:hidden;}
+.ct{padding:12px 14px 8px;}
+.cl{display:flex;align-items:flex-start;gap:9px;}
+.cp{font-family:'Playfair Display',serif;font-size:19px;font-weight:900;color:var(--o);min-width:30px;line-height:1;padding-top:2px;}
+.cn{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--v);line-height:1.2;margin-bottom:2px;}
+.clo{font-size:10px;color:var(--cz);}
+.csc{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;color:var(--v);line-height:1;}
+.css{font-size:9px;color:#ccc;text-align:right;}
+.ce{font-size:11px;letter-spacing:2px;padding:4px 14px 7px;border-top:1px solid #f5f5f5;}
+.cno{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;padding:0 14px 8px;}
+.cni{background:#f9f9f9;border-radius:5px;padding:5px 3px;text-align:center;}
+.cni-i{font-size:11px;}
+.cni-l{font-size:7px;color:#aaa;display:block;}
+.cni-n{font-weight:700;font-size:11px;color:var(--v);}
+.ca{display:flex;gap:6px;padding:7px 14px 12px;border-top:1px solid #f5f5f5;}
+.byt{flex:2;padding:9px;background:var(--v);color:#fff;border:none;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;}
+.bv{flex:1;padding:9px;background:#f0f5f2;color:var(--v);border:none;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;}
+.vz{text-align:center;padding:48px 18px;color:#aaa;}
+.vz-i{font-size:42px;margin-bottom:10px;}
+.vz h3{font-family:'Playfair Display',serif;font-size:17px;color:var(--v);margin-bottom:5px;}
+.vz p{font-size:11px;line-height:1.6;}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;overflow-y:auto;padding:14px;}
+.modal.on{display:flex;align-items:flex-start;justify-content:center;}
+.mbox{background:#fff;max-width:520px;width:100%;border-radius:14px;overflow:hidden;margin:auto;}
+.mh{background:var(--v);color:var(--cr);padding:18px 20px;}
+.mh h2{font-family:'Playfair Display',serif;font-size:17px;margin-bottom:1px;}
+.msc{font-family:'Playfair Display',serif;font-size:36px;font-weight:900;color:var(--o);line-height:1;margin-top:8px;}
+.mbody{padding:16px 20px;max-height:56vh;overflow-y:auto;}
+.ms{font-size:10px;font-weight:600;color:var(--o);letter-spacing:2px;text-transform:uppercase;margin:12px 0 7px;padding-bottom:3px;border-bottom:1px solid #eee;}
+.ng{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.ni{background:#f9f9f9;border-radius:7px;padding:8px 10px;display:flex;align-items:center;gap:8px;}
+.ni-i{font-size:14px;}
+.ni-n{font-size:10px;color:#888;}
+.ni-v{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--v);}
+.obs{font-size:12px;color:#555;line-height:1.6;background:#f9f9f9;border-radius:7px;padding:9px 11px;}
+.mf{padding:12px 20px;background:#f9f9f9;border-top:1px solid #eee;display:flex;gap:7px;}
+.bfc{flex:1;padding:11px;background:#eee;border:none;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;}
+.bfyt{flex:2;padding:11px;background:var(--v);color:#fff;border:none;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;}
+.rod{background:var(--v);color:var(--cr);padding:22px;text-align:center;}
+.rls{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:8px;}
+.rla{font-size:11px;color:rgba(245,240,232,.5);text-decoration:none;}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(18px);background:var(--v);color:var(--cr);padding:9px 18px;border-radius:18px;font-size:11px;font-weight:600;opacity:0;transition:all .3s;z-index:300;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#map{width:100%;height:200px;border-radius:10px;margin-top:10px;border:1px solid #eee;z-index:1;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="lw">
+    <img class="li" src="https://guiaexkombeiros-hue.github.io/exkombeiros/logo.png" onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='">
+    <div><div class="badge">Guia Técnico Independente</div><h1>Guia <em>Exkombeiros</em><br>de Camping</h1></div>
+  </div>
+  <p>Avaliações técnicas independentes para trailers, motorhomes e vans.</p>
+  <div class="stats">
+    <div><div class="sn" id="st">0</div><div class="sl">Campings</div></div>
+    <div><div class="sn" id="sm">—</div><div class="sl">Score médio</div></div>
+    <div><div class="sn" id="se">—</div><div class="sl">Estados</div></div>
+  </div>
+</div>
+
+<div class="sobre">Somos <strong>Rogério e Viviane</strong>, viajantes de trailer que criaram o primeiro guia técnico de campings do Brasil. Critérios objetivos e mensuráveis. Sem influência de patrocinadores nas notas.</div>
+
+<div class="inst" id="inst">
+  <span style="font-size:18px">📱</span>
+  <div><h4>Adicionar à tela inicial</h4><p>Safari → Compartilhar → "Adicionar à Tela de Início"</p></div>
+  <button style="background:none;border:none;font-size:16px;color:#ccc;cursor:pointer;margin-left:auto" onclick="document.getElementById('inst').style.display='none'">✕</button>
+</div>
+
+<div class="busca">
+  <input class="bi" id="bi" type="text" placeholder="🔍 Buscar camping ou cidade..." oninput="buscar(this.value)">
+</div>
+
+<div class="filtros" id="fw">
+  <button class="fb on" onclick="filtrar('todos',this)">Todos</button>
+  <button class="fb" onclick="filtrar('5',this)">⭐ 5 estrelas</button>
+  <button class="fb" onclick="filtrar('4',this)">4+ estrelas</button>
+</div>
+
+<div class="rank">
+  <div class="rt" id="rt">Carregando...</div>
+  <div id="lc"><div class="vz"><div class="vz-i">⛺</div><h3>Carregando...</h3><p>Buscando avaliações na nuvem.</p></div></div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="mbox">
+    <div class="mh">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div><h2 id="mn">Nome do Camping</h2><div id="ml" style="font-size:11px;opacity:.7">📍 Localização</div></div>
+        <div style="text-align:right"><div class="msc" id="msc">0.0</div><div style="font-size:10px;opacity:.5">SCORE FINAL</div></div>
+      </div>
+      <div id="mest" style="font-size:16px;margin-top:10px;letter-spacing:2px">☆ ☆ ☆ ☆ ☆</div>
+    </div>
+    <div class="mbody" id="mc"></div>
+    <div class="mf">
+      <button class="bfc" onclick="fM()">Fechar</button>
+      <button class="bfyt" id="byt">▶ Ver no YouTube</button>
+    </div>
+  </div>
+</div>
+
+<div class="rod">
+  <div class="rls">
+    <a class="rla" href="https://youtube.com/@exkombeiros" target="_blank">▶ YouTube</a>
+    <a class="rla" href="https://instagram.com/exkombeiros" target="_blank">📸 Instagram</a>
+    <a class="rla" href="https://tiktok.com/@exkombeiros" target="_blank">🎵 TikTok</a>
+    <a class="rla" href="mailto:contato@exkombeiros.com.br">✉ Contato</a>
+  </div>
+  <p style="font-size:9px;color:rgba(245,240,232,.3);margin-top:14px">© 2024 Guia Exkombeiros · MG e Brasil</p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var IC=['⚡','🚿','🅿️','💧','📶','🌲','🍳','🛒'];
+var NM=['Energia','Banheiros','Acesso','Água','Sinal','Infraestr.','Cozinha','Conveniên.'];
+var NF=['Energia Elétrica','Banheiros e Sanitários','Acesso e Terreno','Água','Conectividade','Infraestrutura Geral','Cozinha Compartilhada','Conveniência e Serviços'];
+var RG={'MG':'🏔️ Minas Gerais','SP':'🌃 São Paulo','RJ':'🏖️ Rio de Janeiro','SC':'🌲 Santa Catarina','PR':'🌊 Paraná','RS':'🍷 Rio Grande do Sul','ES':'🏔️ Espírito Santo','GO':'🌾 Goiás','BA':'🌞 Bahia','CE':'🌵 Ceará','PE':'🌊 Pernambuco','MT':'🌿 Mato Grosso','MS':'🌾 Mato Grosso do Sul','PA':'🌳 Pará','AM':'🌳 Amazonas','DF':'🏛️ Distrito Federal','AL':'🏖️ Alagoas','SE':'🌊 Sergipe','RN':'🌊 Rio Grande do Norte','PB':'🌊 Paraíba','PI':'🌵 Piauí','MA':'🌊 Maranhão','TO':'🌾 Tocantins','RO':'🌿 Rondônia','AC':'🌿 Acre','AP':'🌿 Amapá','RR':'🌿 Roraima','ARG':'🇦🇷 Argentina','URU':'🇺🇾 Uruguai','PAR':'🇵🇾 Paraguai','CHI':'🇨🇱 Chile','POR':'🇵🇹 Portugal'};
+var data=[];var fa='todos';var tb='';var map;
+
+function est(c){if(!c)return null;var m=c.match(/[-–]\s*([A-Z]{2,3})$/);return m?m[1]:null;}
+
+function load(){
+  firebase.initializeApp({
+    apiKey: "AIzaSyCFeqtsuT-4Q4e8EyrsEPRcIo3I6AmfEzE",
+    authDomain: "exkombeiros-24a9a.firebaseapp.com",
+    databaseURL: "https://exkombeiros-24a9a-default-rtdb.firebaseio.com",
+    projectId: "exkombeiros-24a9a",
+    storageBucket: "exkombeiros-24a9a.firebasestorage.app",
+    messagingSenderId: "507759690855",
+    appId: "1:507759690855:web:8a6ec18c9a98d7ee9900c2"
+  });
+  var db = firebase.database();
+  db.ref('campings').on('value', function(snapshot){
+    var d = snapshot.val();
+    data = d ? Object.entries(d).map(function(e){
+      return Object.assign({}, e[1], {_k: e[0]});
+    }) : [];
+    render();
+  }, function(err){
+    document.getElementById('rt').textContent='Sem conexão — recarregue';
+  });
+}
+
+function render(){
+  document.getElementById('st').textContent=data.length||'0';
+  var cs=data.filter(function(c){return c.score!=null;});
+  document.getElementById('sm').textContent=cs.length?(cs.reduce(function(a,b){return a+Number(b.score);},0)/cs.length).toFixed(1):'—';
+  var es=new Set(data.map(function(c){return est(c.cidade);}).filter(Boolean));
+  document.getElementById('se').textContent=es.size||'—';
+  var fw=document.getElementById('fw');
+  fw.querySelectorAll('.din').forEach(function(b){b.remove();});
+  if(es.size>0){
+    var sep=document.createElement('span');sep.className='din';sep.style.cssText='color:#ddd;align-self:center;font-size:13px;flex-shrink:0;';sep.textContent='|';fw.appendChild(sep);
+    Array.from(es).sort().forEach(function(s){
+      if(!RG[s])return;
+      var b=document.createElement('button');b.className='fb din';b.textContent=RG[s];
+      if(fa===s)b.classList.add('on');
+      b.onclick=function(){filtrar(s,b);};fw.appendChild(b);
+    });
+  }
+  lista();
+}
+
+function lista(){
+  var l=data.slice().sort(function(a,b){return(Number(b.score)||0)-(Number(a.score)||0);});
+  if(tb){var t=tb.toLowerCase();l=l.filter(function(c){return(c.nome||'').toLowerCase().includes(t)||(c.cidade||'').toLowerCase().includes(t);});}
+  if(fa==='5')l=l.filter(function(c){return c.score&&Math.round(c.score)===5;});
+  else if(fa==='4')l=l.filter(function(c){return c.score&&c.score>=4;});
+  else if(fa!=='todos')l=l.filter(function(c){return est(c.cidade)===fa;});
+  document.getElementById('rt').textContent=l.length===0?'Nenhum resultado':l.length===1?'1 camping avaliado':l.length+' campings avaliados';
+  var el=document.getElementById('lc');
+  if(!l.length){el.innerHTML='<div class="vz"><div class="vz-i">'+(data.length===0?'⛺':'🔍')+'</div><h3>'+(data.length===0?'Em breve!':'Nenhum resultado')+'</h3><p>'+(data.length===0?'As primeiras avaliações chegam em breve!':'Tente outro filtro.')+'</p></div>';return;}
+  el.innerHTML=l.map(function(c,i){
+    var p=i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1);
+    var sc=c.score!=null?Number(c.score).toFixed(1):'—';
+    var n=c.score?Math.round(c.score):0;
+    var e=('★'.repeat(n)+'☆'.repeat(5-n)).split('').join(' ');
+    var no=(c.notas||[]).slice(0,4).map(function(v,x){return'<div class="cni"><div class="cni-i">'+IC[x]+'</div><span class="cni-l">'+NM[x]+'</span><div class="cni-n">'+(v!=null?Number(v).toFixed(1):'—')+'</div></div>';}).join('');
+    var tg=(c.recAtivos||[]).slice(0,3).map(function(r){return'<span style="font-size:10px;padding:3px 8px;border-radius:10px;background:#f0f5f2;color:#2d5a3d;font-weight:500">'+r+'</span>';}).join('');
+    var yl=c.youtube&&c.youtube.trim()?c.youtube:'https://youtube.com/@exkombeiros';
+    var yt=c.youtube&&c.youtube.trim()?'▶ Ver vídeo':'▶ Canal YouTube';
+    return'<div class="card"><div class="ct"><div class="cl"><div class="cp">'+p+'</div><div style="flex:1"><div class="cn">'+c.nome+'</div><div class="clo">📍 '+(c.cidade||'')+'</div></div><div><div class="csc">'+sc+'</div><div class="css">/ 5</div></div></div></div><div class="ce">'+e+'</div><div class="cno">'+no+'</div>'+(tg?'<div style="display:flex;flex-wrap:wrap;gap:5px;padding:0 14px 8px">'+tg+'</div>':'')+'<div class="ca"><button class="byt" onclick="aL(\''+yl+'\')">'+yt+'</button><button class="bv" onclick="aF(\''+c._k+'\')">Ver ficha</button></div>'+(c.data?'<div style="padding:0 14px 10px;font-size:9px;color:#ccc">Avaliado em '+c.data+'</div>':'')+'</div>';
+  }).join('');
+}
+
+function filtrar(v,b){fa=v;document.querySelectorAll('.fb').forEach(function(x){x.classList.remove('on');});b.classList.add('on');lista();}
+function buscar(t){tb=t;lista();}
+
+function aF(k){
+  var c=data.find(function(x){return x._k===k;});if(!c)return;
+  document.getElementById('mn').textContent=c.nome||'Camping';
+  document.getElementById('ml').textContent='📍 '+(c.cidade||'');
+  document.getElementById('msc').textContent=c.score!=null?Number(c.score).toFixed(1):'—';
+  var n=c.score?Math.round(c.score):0;
+  document.getElementById('mest').textContent=('★'.repeat(n)+'☆'.repeat(5-n)).split('').join(' ');
+  var b=document.getElementById('byt');
+  var yl=c.youtube&&c.youtube.trim()?c.youtube:'https://youtube.com/@exkombeiros';
+  b.textContent=c.youtube&&c.youtube.trim()?'▶ Ver vídeo no YouTube':'▶ Visitar canal';
+  b.onclick=function(){aL(yl);};
+  var no=(c.notas||[]).map(function(v,i){return'<div class="ni"><span class="ni-i">'+IC[i]+'</span><div><div class="ni-n">'+NF[i]+'</div><div class="ni-v">'+(v!=null?Number(v).toFixed(1):'—')+' <span style="font-size:9px;color:#ccc">/ 5</span></div></div></div>';}).join('');
+  var rc=c.recAtivos&&c.recAtivos.length?'<div class="ms">🎯 Recreação</div><div style="display:flex;flex-wrap:wrap;gap:5px">'+(c.recAtivos.map(function(r){return'<span style="background:#e8f8ee;color:#27ae60;padding:3px 9px;border-radius:9px;font-size:10px;font-weight:500">'+r+'</span>';}).join(''))+'</div>':'';
+  var inf=[(c.preco?'💰 '+c.preco:null),(c.data?'📅 '+c.data:null)].filter(Boolean).join(' · ');
+  
+  var mapHtml = '';
+  if(c.lat && c.lng) {
+    mapHtml = '<div class="ms">📍 Localização no Mapa</div><div id="map"></div>';
+  }
+
+  document.getElementById('mc').innerHTML=(inf?'<p style="font-size:10px;color:#aaa;margin-bottom:12px">'+inf+'</p>':'')+'<div class="ms">📊 Notas Técnicas</div><div class="ng">'+no+'</div>'+rc+mapHtml+(c.obs?'<div class="ms">📝 Observações</div><div class="obs">'+c.obs+'</div>':'')+'<p style="font-size:10px;color:#aaa;margin-top:12px;line-height:1.5">Avaliação técnica independente por Rogério e Viviane · Guia Exkombeiros</p>';
+  document.getElementById('modal').classList.add('on');
+
+  if(c.lat && c.lng) {
+    setTimeout(function(){
+      if(map) map.remove();
+      map = L.map('map').setView([c.lat, c.lng], 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+      }).addTo(map);
+      L.marker([c.lat, c.lng]).addTo(map).bindPopup(c.nome).openPopup();
+    }, 100);
+  }
+}
+
+function fM(){document.getElementById('modal').classList.remove('on'); if(map) map.remove();}
+function aL(u){if(u)window.open(u,'_blank');}
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)fM();});
+load();
+</script>
+</body>
+</html>
