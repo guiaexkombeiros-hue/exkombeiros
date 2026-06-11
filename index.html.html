@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="color-scheme" content="light">
+  <title>Painel Admin - Guia Exkombeiros</title>
+  
+  <!-- Fontes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Firebase Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+
+  <style>
+    /* Estilos preservados da versão funcional */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+    html, body { background-color: #eae6df !important; color: #1b3d2f !important; min-height: 100vh; }
+    body { padding-bottom: 60px; line-height: 1.4; }
+    .wrapper { max-width: 480px; margin: 0 auto; padding: 16px; }
+    header { background-color: #1b3d2f !important; color: #ffffff !important; padding: 24px 16px; text-align: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-bottom: 2px solid #d4af37; }
+    header h1 { font-family: 'Cinzel', serif; font-size: 24px; letter-spacing: 1px; font-weight: 700; }
+    header h1 span { color: #d4af37 !important; font-style: italic; }
+    header p { font-family: 'Cinzel', serif; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #a3bdae !important; margin-top: 4px; }
+    .dashboard-stats { display: grid; grid-template-cols: repeat(3, 1fr); gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.15); }
+    .stat-box { text-align: center; }
+    .stat-lbl { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #a3bdae !important; display: block; margin-bottom: 2px; }
+    .stat-num { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; color: #d4af37 !important; }
+    .tab-navigation { display: grid; grid-template-cols: 1fr 1fr; background-color: #ffffff; margin: 12px 0 20px 0; border-radius: 12px; padding: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .tab-btn { background: none; border: none; padding: 12px; font-size: 13px; font-weight: 700; color: #6b7280; cursor: pointer; border-radius: 8px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .tab-btn.active { background-color: #1b3d2f !important; color: #ffffff !important; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .toast-msg { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 2000; background-color: #1b3d2f !important; color: #ffffff !important; border: 2px solid #d4af37 !important; padding: 16px 24px; border-radius: 16px; font-size: 14px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; gap: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); width: calc(100% - 32px); max-width: 400px; }
+    .toast-msg.hidden { display: none !important; }
+    .card-block { background-color: #1b3d2f !important; color: #ffffff !important; border-radius: 20px; padding: 16px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(27,61,47,0.12); }
+    .card-block.white-theme { background-color: #ffffff !important; color: #1b3d2f !important; }
+    .card-block-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 16px; }
+    .card-block.white-theme .card-block-header { border-bottom: 1px solid rgba(27,61,47,0.08); }
+    .card-block-title { font-family: 'Cinzel', serif; font-size: 15px; font-weight: 700; }
+    .card-block-weight { font-size: 9px; background: rgba(212,175,55,0.18); color: #d4af37 !important; padding: 4px 10px; border-radius: 20px; font-weight: 700; }
+    .criterion-wrapper { background-color: #ffffff !important; color: #1b3d2f !important; border-radius: 14px; padding: 12px; margin-bottom: 12px; }
+    .criterion-title { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #6b7280 !important; display: block; margin-bottom: 8px; }
+    .input-box { margin-bottom: 16px; }
+    .input-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #6b7280 !important; display: block; margin-bottom: 6px; }
+    .input-ctrl { width: 100%; border: none; border-bottom: 2px solid #1b3d2f; background: transparent; outline: none; padding: 8px 0; font-size: 15px; color: #1b3d2f !important; }
+    .grid-2col { display: grid; grid-template-cols: 1fr 1fr; gap: 16px; }
+    .choices-grid { display: grid; grid-template-cols: repeat(auto-fit, minmax(80px, 1fr)); gap: 6px; }
+    .btn-choice { background-color: #f3f4f6 !important; border: 1px solid #e5e7eb !important; color: #4b5563 !important; padding: 12px 4px; border-radius: 10px; font-size: 11px; font-weight: 600; cursor: pointer; text-align: center; }
+    .btn-choice.active { background-color: #1b3d2f !important; color: #ffffff !important; border-color: #1b3d2f !important; font-weight: 700; }
+    .score-summary { background-color: #1b3d2f !important; color: #ffffff !important; border-radius: 20px; padding: 24px; text-align: center; margin-bottom: 20px; border: 1px solid #d4af37; }
+    .score-summary-num { font-family: 'Cinzel', serif; font-size: 48px; font-weight: 700; color: #d4af37 !important; }
+    .letter-preview { width: 100%; min-height: 250px; background-color: #fdfcf7 !important; color: #1b3d2f !important; border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px; font-size: 13px; line-height: 1.5; outline: none; resize: vertical; white-space: pre-wrap; }
+    .ranking-container { display: flex; flex-direction: column; gap: 12px; }
+    .ranking-item { background: white; border-radius: 14px; padding: 14px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid #1b3d2f; }
+    .ranking-position { font-family: 'Cinzel', serif; font-weight: 700; color: #d4af37; min-width: 30px; }
+    .ranking-badge { font-family: 'Cinzel', serif; background-color: #1b3d2f; color: #d4af37; font-weight: 700; padding: 4px 8px; border-radius: 8px; }
+    .btn-action { padding: 14px 20px; border-radius: 12px; font-size: 14px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
+    .btn-action-save { background-color: #1b3d2f !important; color: #ffffff !important; }
+    .btn-action-clear { background-color: #d4af37 !important; color: #1b3d2f !important; width: auto; }
+    .btn-action-copy { background-color: #d4af37 !important; color: #1b3d2f !important; margin-top: 10px; }
+    .btn-action-share { background-color: #25d366 !important; color: white !important; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+
+  <div class="toast-msg hidden" id="toast">
+    <span id="toast-text">Pronto!</span>
+    <button type="button" onclick="document.getElementById('toast').classList.add('hidden')" style="background:none; border:none; color:#d4af37; font-size:20px; cursor:pointer;">×</button>
+  </div>
+
+  <header>
+    <div class="wrapper" style="padding: 0;">
+      <h1>Guia <span>Exkombeiros</span></h1>
+      <p>Painel do Administrador</p>
+      <div class="dashboard-stats">
+        <div class="stat-box"><span class="stat-lbl">Campings</span><span id="stat-campings" class="stat-num">0</span></div>
+        <div class="stat-box"><span class="stat-lbl">Score Médio</span><span id="stat-score" class="stat-num">0.0</span></div>
+        <div class="stat-box"><span class="stat-lbl">Estados</span><span id="stat-estados" class="stat-num">0</span></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrapper">
+    <div class="tab-navigation">
+      <button type="button" id="tab-nav-form" class="tab-btn active" onclick="mudarAba('form')">📝 Avaliar Camping</button>
+      <button type="button" id="tab-nav-ranking" class="tab-btn" onclick="mudarAba('ranking')">🏆 Ranking Geral</button>
+    </div>
+
+    <div id="tab-form" class="tab-content active">
+      <form id="campingForm" onsubmit="return false;">
+        <input type="hidden" id="editing-key" value="">
+        
+        <div class="card-block white-theme">
+          <div class="card-block-header"><h2 class="card-block-title">📋 Identificação</h2></div>
+          <div class="input-box">
+            <label class="input-lbl">Nome do Camping</label>
+            <input type="text" id="nome" class="input-ctrl" oninput="gerarTextoDaCarta()" placeholder="Ex: Camping Lindo Horizonte">
+          </div>
+          <div class="grid-2col input-box">
+            <div><label class="input-lbl">Cidade</label><input type="text" id="cidade" class="input-ctrl" oninput="gerarTextoDaCarta()" placeholder="Lambari"></div>
+            <div><label class="input-lbl">Estado (UF)</label><input type="text" id="estado" class="input-ctrl" oninput="gerarTextoDaCarta()" placeholder="MG" maxlength="2" style="text-transform: uppercase;"></div>
+          </div>
+          <div class="input-box">
+            <label class="input-lbl">Observações</label>
+            <input type="text" id="observacoes" class="input-ctrl" oninput="gerarTextoDaCarta()" placeholder="Ex: Sombra excelente...">
+          </div>
+        </div>
+
+        <!-- ENERGIA -->
+        <div class="card-block">
+          <div class="card-block-header"><h2 class="card-block-title">⚡ Energia Elétrica</h2><span class="card-block-weight">Peso 25%</span></div>
+          <div class="criterion-wrapper">
+            <span class="criterion-title">Tensão Disponível</span>
+            <div class="choices-grid" data-group="energia_tensao">
+              <button type="button" class="btn-choice" data-value="3" onclick="selectChoice(this)">220V + 110V ★</button>
+              <button type="button" class="btn-choice" data-value="2" onclick="selectChoice(this)">Só 220V</button>
+              <button type="button" class="btn-choice" data-value="2" onclick="selectChoice(this)">Só 110V</button>
+              <button type="button" class="btn-choice" data-value="0" onclick="selectChoice(this)">Sem energia</button>
+            </div>
+          </div>
+          <div class="criterion-wrapper">
+            <span class="criterion-title">Estabilidade</span>
+            <div class="choices-grid" data-group="energia_estabilidade">
+              <button type="button" class="btn-choice" data-value="3" onclick="selectChoice(this)">Estável</button>
+              <button type="button" class="btn-choice" data-value="2" onclick="selectChoice(this)">Oscila leve</button>
+              <button type="button" class="btn-choice" data-value="1" onclick="selectChoice(this)">Oscila muito</button>
+            </div>
+          </div>
+          <div class="criterion-wrapper">
+            <span class="criterion-title">Amperagem</span>
+            <div class="choices-grid" data-group="energia_amperagem">
+              <button type="button" class="btn-choice" data-value="3" onclick="selectChoice(this)">≥ 20A</button>
+              <button type="button" class="btn-choice" data-value="2" onclick="selectChoice(this)">15A</button>
+              <button type="button" class="btn-choice" data-value="1.5" onclick="selectChoice(this)">10A</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- BANHEIROS -->
+        <div class="card-block">
+          <div class="card-block-header"><h2 class="card-block-title">🚿 Banheiros</h2><span class="card-block-weight">Peso 20%</span></div>
+          <div class="criterion-wrapper">
+            <span class="criterion-title">Área Seca e Box</span>
+            <div class="choices-grid" data-group="banheiro_seco">
+              <button type="button" class="btn-choice" data-value="3" onclick="selectChoice(this)">Sim, boa</button>
+              <button type="button" class="btn-choice" data-value="2" onclick="selectChoice(this)">Parcial</button>
+              <button type="button" class="btn-choice" data-value="0" onclick="selectChoice(this)">Não tem</button>
+            </div>
+          </div>
+          <div class="criterion-wrapper">
+            <span class="criterion-title">Água Quente</span>
+            <div class="choices-grid" data-group="banheiro_quente">
+              <button type="button" class="btn-choice" data-value="3" onclick="selectChoice(this)">Boa constante</button>
+              <button type="button" class="btn-choice" data-value="2" onclick="selectChoice(this)">Morna/fraca</button>
+              <button type="button" class="btn-choice" data-value="1" onclick="selectChoice(this)">Fria</button>
+            </div>
+          </div>
+          <div class="criterion-wrapper">
+            <span class="criterion-title">Limpeza</span>
+            <div class="choices-grid" data-group="banheiro_limpeza">
+              <button type="button" class="btn-choice" data-value="3" onclick="selectChoice(this)">Ótima</button>
+              <button type="button" class="btn-choice" data-value="2.5" onclick="selectChoice(this)">Boa</button>
+              <button type="button" class="btn-choice" data-value="1.5" onclick="selectChoice(this)">Regular</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACESSO -->
+        <div class="card-block">
+          <div class="card-block-header"><h2 class="card-block-title">🚗 Acesso e Terreno</h2><span class="card-block-weight">Peso 20%</span></div>
+          <div class="criterion-wrapper">
+            <span class="criterion-title">Estrada de Acesso</span>
+            <div class="choices-grid" data-group="acesso_estrada">
+              <button type="button" class="btn-choice" data-value="3" onclick="selectChoice(this)">Asfalto</button>
+              <button type="button" class="btn-choice" data-value="2.5" onclick="selectChoice(this)">Terra boa</button>
+              <button type="button" class="btn-choice" data-value="1.5" onclick="selectChoice(this)">Terra irreg.</button>
+            </div>
+          </div>
+          <div class="criterion-wrapper">
+            <span class="criterion-title">Entrada Trailer</span>
+            <div class="choices-grid" data-group="acesso_trailer">
+              <button type="button" class="btn-choice" data-value="3" onclick="selectChoice(this)">Fácil</button>
+              <button type="button" class="btn-choice" data-value="1.5" onclick="selectChoice(this)">Apertada</button>
+              <button type="button" class="btn-choice" data-value="0" onclick="selectChoice(this)">Inviável</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONECTIVIDADE -->
+        <div class="card-block">
+          <div class="card-block-header"><h2 class="card-block-title">📶 Conectividade</h2><span class="card-block-weight">Peso 10%</span></div>
+          <div class="criterion-wrapper">
+            <span class="criterion-title">Sinal Celular</span>
+            <div class="choices-grid" data-group="conec_sinal">
+              <button type="button" class="btn-choice" data-value="3" onclick="selectChoice(this)">4G pleno</button>
+              <button type="button" class="btn-choice" data-value="2" onclick="selectChoice(this)">4G bom</button>
+              <button type="button" class="btn-choice" data-value="0" onclick="selectChoice(this)">Sem sinal</button>
+            </div>
+          </div>
+          <div class="criterion-wrapper">
+            <span class="criterion-title">Wi-Fi</span>
+            <div class="choices-grid" data-group="conec_wifi">
+              <button type="button" class="btn-choice" data-value="3" onclick="selectChoice(this)">Rápido</button>
+              <button type="button" class="btn-choice" data-value="2" onclick="selectChoice(this)">Lento</button>
+              <button type="button" class="btn-choice" data-value="0" onclick="selectChoice(this)">Não tem</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- COZINHA E INFRA -->
+        <div class="card-block">
+          <div class="card-block-header"><h2 class="card-block-title">🍳 Cozinha e Infra</h2><span class="card-block-weight">Peso 25%</span></div>
+          <div class="criterion-wrapper">
+            <span class="criterion-title">Cozinha Geral</span>
+            <div class="choices-grid" data-group="cozinha_geral">
+              <button type="button" class="btn-choice" data-value="3" onclick="selectChoice(this)">Completa</button>
+              <button type="button" class="btn-choice" data-value="2" onclick="selectChoice(this)">Básica</button>
+              <button type="button" class="btn-choice" data-value="0" onclick="selectChoice(this)">Não tem</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="score-summary">
+          <div id="nota-display" class="score-summary-num">0.0</div>
+        </div>
+
+        <div class="actions-grid">
+          <button type="button" class="btn-action btn-action-save" onclick="gravarNoFirebase()">💾 Guardar no Firebase</button>
+          <button type="button" class="btn-action btn-action-clear" onclick="limparTudo()">🧹 Limpar</button>
+        </div>
+
+        <div class="card-block" style="margin-top: 24px; border: 2px dashed #d4af37 !important;">
+          <h2 class="card-block-title" style="color:#d4af37!important; margin-bottom: 12px;">📝 Texto Automático da Carta</h2>
+          <textarea id="carta-output" class="letter-preview" readonly></textarea>
+          <button type="button" class="btn-action btn-action-copy" onclick="copiarTexto()">📋 Copiar Texto Completo</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="tab-ranking" class="tab-content">
+      <button type="button" class="btn-action btn-action-share" onclick="copiarRanking()">🚀 Copiar Ranking Geral</button>
+      <div class="ranking-container" id="ranking-list-render">
+        <p style="text-align:center; color:#6b7280; padding:20px;">Carregando dados...</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Configurações Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyCFeqtsuT-4Q4e8EyrsEPRcIo3I6AmfEzE",
+      authDomain: "exkombeiros-24a9a.firebaseapp.com",
+      databaseURL: "https://exkombeiros-24a9a-default-rtdb.firebaseio.com",
+      projectId: "exkombeiros-24a9a",
+      storageBucket: "exkombeiros-24a9a.firebasestorage.app",
+      messagingSenderId: "507759690855",
+      appId: "1:507759690855:web:8a6ec18c9a98d7ee9900c2"
+    };
+
+    let db;
+    window.listaCompletaCampings = {};
+
+    function initFirebase() {
+      try {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.database();
+        db.ref('campings').on('value', (snapshot) => {
+          const data = snapshot.val() || {};
+          window.listaCompletaCampings = data;
+          renderRanking();
+        });
+      } catch (e) { console.error("Firebase Error:", e); }
+    }
+
+    function renderRanking() {
+      const arr = Object.keys(window.listaCompletaCampings).map(key => ({ id: key, ...window.listaCompletaCampings[key] }));
+      arr.sort((a, b) => (parseFloat(b.nota) || 0) - (parseFloat(a.nota) || 0));
+      
+      const elCampings = document.getElementById('stat-campings');
+      const elScore = document.getElementById('stat-score');
+      const elEstados = document.getElementById('stat-estados');
+      const container = document.getElementById('ranking-list-render');
+
+      if (elCampings) elCampings.innerText = arr.length;
+      if (elScore) {
+        const soma = arr.reduce((acc, c) => acc + (parseFloat(c.nota) || 0), 0);
+        elScore.innerText = arr.length > 0 ? (soma / arr.length).toFixed(1) : "0.0";
+      }
+      if (elEstados) elEstados.innerText = new Set(arr.map(c => c.estado)).size;
+
+      if (container) {
+        let html = "";
+        arr.forEach((c, idx) => {
+          html += `<div class="ranking-item">
+            <div class="ranking-position">#${idx+1}</div>
+            <div style="flex:1"><b>${c.nome}</b><br><small>${c.cidade || ""}-${c.estado || ""}</small></div>
+            <div class="ranking-badge">${parseFloat(c.nota || 0).toFixed(1)} ★</div>
+            <div style="display:flex; gap:5px; margin-left:10px;">
+              <button onclick="prepararEdicao('${c.id}')" style="border:none; background:none; cursor:pointer;">✏️</button>
+              <button onclick="deletarCamping('${c.id}')" style="border:none; background:none; cursor:pointer;">❌</button>
+            </div>
+          </div>`;
+        });
+        container.innerHTML = html || "<p style='text-align:center'>Nenhum camping registrado.</p>";
+      }
+    }
+
+    function mudarAba(aba) {
+      const tabForm = document.getElementById('tab-form');
+      const tabRanking = document.getElementById('tab-ranking');
+      const navForm = document.getElementById('tab-nav-form');
+      const navRanking = document.getElementById('tab-nav-ranking');
+
+      if (tabForm) tabForm.classList.remove('active');
+      if (tabRanking) tabRanking.classList.remove('active');
+      if (navForm) navForm.classList.remove('active');
+      if (navRanking) navRanking.classList.remove('active');
+      
+      const targetTab = document.getElementById('tab-' + aba);
+      const targetNav = document.getElementById('tab-nav-' + aba);
+      if (targetTab) targetTab.classList.add('active');
+      if (targetNav) targetNav.classList.add('active');
+    }
+
+    function selectChoice(btn) {
+      const pai = btn.parentElement;
+      if (pai) {
+        pai.querySelectorAll('.btn-choice').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        calcularNota();
+      }
+    }
+
+    function pegarMediaGrupo(listaGrupos) {
+      let soma = 0; let total = 0;
+      listaGrupos.forEach(g => {
+        const div = document.querySelector(`[data-group="${g}"]`);
+        if (div) {
+          const ativo = div.querySelector('.btn-choice.active');
+          if (ativo) { soma += parseFloat(ativo.getAttribute('data-value')) || 0; total++; }
+        }
+      });
+      return total === 0 ? 0 : (soma / total);
+    }
+
+    function calcularNota() {
+      const estruturaPesos = {
+        energia: { peso: 0.25, grupos: ['energia_tensao', 'energia_estabilidade', 'energia_amperagem'] },
+        banheiro: { peso: 0.20, grupos: ['banheiro_seco', 'banheiro_quente', 'banheiro_limpeza'] },
+        acesso: { peso: 0.20, grupos: ['acesso_estrada', 'acesso_trailer'] },
+        conectividade: { peso: 0.10, grupos: ['conec_sinal', 'conec_wifi'] },
+        cozinha_infra: { peso: 0.25, grupos: ['cozinha_geral'] }
+      };
+
+      let somaNotaFinal = 0;
+      for (const key in estruturaPesos) {
+        somaNotaFinal += pegarMediaGrupo(estruturaPesos[key].grupos) * estruturaPesos[key].peso;
+      }
+      
+      const elDisplay = document.getElementById('nota-display');
+      if (elDisplay) {
+        elDisplay.innerText = Math.min(5.0, Math.max(0.0, somaNotaFinal)).toFixed(1);
+      }
+      gerarTextoDaCarta();
+    }
+
+    function gerarTextoDaCarta() {
+      const elNome = document.getElementById('nome');
+      const elCidade = document.getElementById('cidade');
+      const elEstado = document.getElementById('estado');
+      const elObs = document.getElementById('observacoes');
+      const elNota = document.getElementById('nota-display');
+      const elCarta = document.getElementById('carta-output');
+
+      const nome = (elNome ? elNome.value.trim() : "") || "[Nome do Camping]";
+      const cidade = (elCidade ? elCidade.value.trim() : "") || "[Cidade]";
+      const estado = (elEstado ? elEstado.value.trim().toUpperCase() : "") || "[UF]";
+      const obs = elObs ? elObs.value.trim() : "";
+      const scoreFinal = elNota ? elNota.innerText : "0.0";
+
+      const nEnergia = pegarMediaGrupo(['energia_tensao', 'energia_estabilidade', 'energia_amperagem']).toFixed(1);
+      const nBanheiro = pegarMediaGrupo(['banheiro_seco', 'banheiro_quente', 'banheiro_limpeza']).toFixed(1);
+      const nAcesso = pegarMediaGrupo(['acesso_estrada', 'acesso_trailer']).toFixed(1);
+      const nConec = pegarMediaGrupo(['conec_sinal', 'conec_wifi']).toFixed(1);
+      const nCozinha = pegarMediaGrupo(['cozinha_geral']).toFixed(1);
+
+      const dataHoje = new Date().toLocaleDateString('pt-BR');
+
+      let template = "Apresentação\n";
+      template += "Prezada equipe do " + nome + " — " + cidade + " " + estado + ",\n\n";
+      template += "Somos Rogério e Viviane, criadores do Guia Exkombeiros de Camping. Realizamos uma visita técnica em " + dataHoje + " e compartilhamos abaixo os resultados.\n\n";
+      template += "Score Técnico Final: " + scoreFinal + " / 5\n\n";
+      template += "⚡ Energia: " + nEnergia + " / 5\n";
+      template += "🚿 Banheiros: " + nBanheiro + " / 5\n";
+      template += "🚗 Acesso: " + nAcesso + " / 5\n";
+      template += "📶 Conectividade: " + nConec + " / 5\n";
+      template += "🍳 Cozinha e Infra: " + nCozinha + " / 5\n\n";
+      template += "🔧 MELHORIAS RECOMENDADAS:\n";
+
+      let melhorias = "";
+      document.querySelectorAll('[data-group]').forEach(div => {
+        const grupo = div.getAttribute('data-group');
+        const btnAtivo = div.querySelector('.btn-choice.active');
+        if (btnAtivo && parseFloat(btnAtivo.getAttribute('data-value')) < 3) {
+          let label = grupo.replace(/_/g, ' ').toUpperCase();
+          melhorias += "• " + label + ": " + btnAtivo.innerText.trim() + "\n";
+        }
+      });
+
+      template += melhorias || "Nenhuma oportunidade crítica registrada.\n";
+      if (obs) template += "\nObservações Adicionais:\n" + obs + "\n";
+      template += "\nAtenciosamente,\nRogério e Viviane\nGuia Exkombeiros";
+
+      if (elCarta) elCarta.value = template;
+    }
+
+    function copiarTexto() {
+      const c = document.getElementById('carta-output');
+      if (c) {
+        c.select();
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(c.value).then(() => alert("Copiado!"));
+          } else {
+            document.execCommand('copy');
+            alert("Copiado!");
+          }
+        } catch (e) { alert("Erro ao copiar. Tente selecionar e copiar manualmente."); }
+      }
+    }
+
+    function limparTudo() {
+      const form = document.getElementById('campingForm');
+      if (form) form.reset();
+      document.querySelectorAll('.btn-choice').forEach(b => b.classList.remove('active'));
+      const elNota = document.getElementById('nota-display');
+      if (elNota) elNota.innerText = "0.0";
+      gerarTextoDaCarta();
+    }
+
+    function gravarNoFirebase() {
+      if (!db) return alert("Firebase não carregado!");
+      const elNome = document.getElementById('nome');
+      const nome = elNome ? elNome.value.trim() : "";
+      if (!nome) return alert("Por favor, preencha o Nome do Camping!");
+      
+      const elKey = document.getElementById('editing-key');
+      const key = elKey ? elKey.value : "";
+      const nota = document.getElementById('nota-display').innerText;
+      
+      const botoesObj = {};
+      document.querySelectorAll('[data-group]').forEach(div => {
+        const grupo = div.getAttribute('data-group');
+        const ativo = div.querySelector('.btn-choice.active');
+        botoesObj[grupo] = ativo ? ativo.getAttribute('data-value') : "";
+      });
+
+      const payload = { 
+        nome, 
+        cidade: document.getElementById('cidade').value,
+        estado: document.getElementById('estado').value,
+        observacoes: document.getElementById('observacoes').value,
+        nota, 
+        ...botoesObj, 
+        timestamp: Date.now() 
+      };
+
+      const ref = key ? db.ref('campings/' + key) : db.ref('campings').push();
+      ref.set(payload).then(() => {
+        alert(key ? "Atualizado!" : "Salvo!");
+        limparTudo();
+      }).catch(err => alert("Erro ao salvar: " + err.message));
+    }
+
+    function prepararEdicao(key) {
+      const item = window.listaCompletaCampings[key];
+      if (!item) return;
+      
+      document.getElementById('editing-key').value = key;
+      document.getElementById('nome').value = item.nome || "";
+      document.getElementById('cidade').value = item.cidade || "";
+      document.getElementById('estado').value = item.estado || "";
+      document.getElementById('observacoes').value = item.observacoes || "";
+
+      document.querySelectorAll('[data-group]').forEach(div => {
+        const grupo = div.getAttribute('data-group');
+        const valorSalvo = item[grupo];
+        div.querySelectorAll('.btn-choice').forEach(btn => {
+          if (valorSalvo !== undefined && btn.getAttribute('data-value') === String(valorSalvo)) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+      });
+
+      calcularNota();
+      mudarAba('form');
+    }
+
+    function deletarCamping(key) {
+      if (confirm("Deseja apagar permanentemente?")) {
+        db.ref('campings/' + key).remove().then(() => alert("Removido!"));
+      }
+    }
+
+    function copiarRanking() {
+      let txt = "🏆 RANKING ATUALIZADO - GUIA EXKOMBEIROS 🏆\n\n";
+      const itens = Object.values(window.listaCompletaCampings).sort((a,b) => (parseFloat(b.nota) || 0) - (parseFloat(a.nota) || 0));
+      itens.forEach((c, idx) => {
+        txt += (idx+1) + "º - " + c.nome + " (" + (c.cidade || "") + "-" + (c.estado || "") + ") : " + parseFloat(c.nota || 0).toFixed(1) + " ★\n";
+      });
+      
+      const temp = document.createElement("textarea");
+      document.body.appendChild(temp);
+      temp.value = txt;
+      temp.select();
+      document.execCommand('copy');
+      document.body.removeChild(temp);
+      alert("Ranking copiado!");
+    }
+
+    window.onload = initFirebase;
+  </script>
+</body>
+</html>
