@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Painel Admin - Guia Exkombeiros</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+
+  <style>
+    :root {
+      --primary: #1b3d2f;
+      --accent: #d4af37;
+      --bg: #eae6df;
+      --card-bg: #ffffff;
+      --text: #1b3d2f;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding-bottom: 50px; }
+    
+    .header { background-color: var(--primary); color: white; padding: 30px 20px; text-align: center; border-bottom: 3px solid var(--accent); }
+    .header h1 { font-family: 'Cinzel', serif; font-size: 20px; }
+    
+    .tabs { display: flex; background: white; padding: 10px; gap: 10px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .tab-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; background: #f3f4f6; color: #6b7280; }
+    .tab-btn.active { background: var(--primary); color: white; }
+
+    .container { max-width: 600px; margin: 20px auto; padding: 0 15px; }
+    .section { background: white; padding: 20px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+    .section-title { font-family: 'Cinzel', serif; font-size: 16px; margin-bottom: 15px; border-bottom: 2px solid var(--bg); padding-bottom: 8px; display: flex; justify-content: space-between; }
+    
+    label { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; color: #6b7280; }
+    input { width: 100%; padding: 12px; border: 2px solid #f3f4f6; border-radius: 12px; margin-bottom: 15px; outline: none; }
+    input:focus { border-color: var(--accent); }
+
+    .btn-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+    .option-btn { padding: 12px; border: 2px solid #f3f4f6; border-radius: 12px; background: white; font-weight: 600; cursor: pointer; text-align: left; transition: all 0.2s; }
+    .option-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
+
+    .score-badge { background: var(--primary); color: var(--accent); padding: 15px; border-radius: 15px; text-align: center; font-family: 'Cinzel', serif; font-size: 24px; font-weight: 700; margin-bottom: 20px; }
+    
+    .action-btn { width: 100%; padding: 16px; border: none; border-radius: 15px; font-weight: 700; font-size: 16px; cursor: pointer; margin-bottom: 10px; }
+    .save-btn { background: var(--primary); color: white; }
+    .copy-btn { background: var(--accent); color: var(--primary); }
+    
+    textarea { width: 100%; height: 200px; padding: 15px; border-radius: 12px; border: 2px solid #f3f4f6; font-size: 13px; line-height: 1.5; margin-top: 10px; }
+    
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <h1>PAINEL ADMIN EXKOMBEIROS</h1>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('form')">📝 AVALIAR</button>
+    <button class="tab-btn" onclick="showTab('ranking')">🏆 RANKING</button>
+  </div>
+
+  <main class="container">
+    <div id="tab-form">
+      <div class="section">
+        <label>Nome do Camping</label>
+        <input type="text" id="nome" placeholder="Ex: Camping Lindo Horizonte" oninput="updateCarta()">
+        <label>Cidade</label>
+        <input type="text" id="cidade" placeholder="Ex: Lambari" oninput="updateCarta()">
+        <label>Estado (UF)</label>
+        <input type="text" id="estado" placeholder="Ex: MG" oninput="updateCarta()">
+      </div>
+
+      <!-- ENERGIA -->
+      <div class="section" data-section="energia">
+        <div class="section-title">⚡ ENERGIA (25%) <span class="sec-score">1.0</span></div>
+        <label>Tensão e Estabilidade</label>
+        <div class="btn-group">
+          <button class="option-btn" data-value="5" onclick="selectOption(this)">Excelente (Estável + Amperagem Boa) ★ 5</button>
+          <button class="option-btn" data-value="4" onclick="selectOption(this)">Boa (Oscilação leve) ★ 4</button>
+          <button class="option-btn" data-value="3" onclick="selectOption(this)">Regular (Oscilação frequente) ★ 3</button>
+          <button class="option-btn" data-value="1" onclick="selectOption(this)">Ruim (Sem energia/Inviável) ★ 1</button>
+        </div>
+      </div>
+
+      <!-- BANHEIROS -->
+      <div class="section" data-section="banheiros">
+        <div class="section-title">🚿 BANHEIROS (20%) <span class="sec-score">1.0</span></div>
+        <label>Limpeza e Estrutura</label>
+        <div class="btn-group">
+          <button class="option-btn" data-value="5" onclick="selectOption(this)">Impecável (Quente + Seco) ★ 5</button>
+          <button class="option-btn" data-value="4" onclick="selectOption(this)">Bom ★ 4</button>
+          <button class="option-btn" data-value="3" onclick="selectOption(this)">Regular ★ 3</button>
+          <button class="option-btn" data-value="1" onclick="selectOption(this)">Precário ★ 1</button>
+        </div>
+      </div>
+
+      <!-- ACESSO -->
+      <div class="section" data-section="acesso">
+        <div class="section-title">🚗 ACESSO (20%) <span class="sec-score">1.0</span></div>
+        <label>Estrada e Manobra</label>
+        <div class="btn-group">
+          <button class="option-btn" data-value="5" onclick="selectOption(this)">Asfalto / Fácil Manobra ★ 5</button>
+          <button class="option-btn" data-value="3" onclick="selectOption(this)">Terra Boa / Atenção ★ 3</button>
+          <button class="option-btn" data-value="1" onclick="selectOption(this)">Difícil / Inviável ★ 1</button>
+        </div>
+      </div>
+
+      <!-- CONECTIVIDADE -->
+      <div class="section" data-section="conexao">
+        <div class="section-title">📶 CONEXÃO (10%) <span class="sec-score">1.0</span></div>
+        <label>Sinal e Wi-Fi</label>
+        <div class="btn-group">
+          <button class="option-btn" data-value="5" onclick="selectOption(this)">4G Pleno + Wi-Fi Rápido ★ 5</button>
+          <button class="option-btn" data-value="3" onclick="selectOption(this)">Sinal Oscilante ★ 3</button>
+          <button class="option-btn" data-value="1" onclick="selectOption(this)">Sem Sinal ★ 1</button>
+        </div>
+      </div>
+
+      <!-- COZINHA -->
+      <div class="section" data-section="cozinha">
+        <div class="section-title">🍳 COZINHA/INFRA (25%) <span class="sec-score">1.0</span></div>
+        <label>Equipamentos</label>
+        <div class="btn-group">
+          <button class="option-btn" data-value="5" onclick="selectOption(this)">Completa ★ 5</button>
+          <button class="option-btn" data-value="3" onclick="selectOption(this)">Básica ★ 3</button>
+          <button class="option-btn" data-value="1" onclick="selectOption(this)">Não tem ★ 1</button>
+        </div>
+      </div>
+
+      <div class="score-badge">SCORE FINAL: <span id="final-score">1.0</span></div>
+
+      <button class="action-btn save-btn" onclick="saveToFirebase()">💾 GUARDAR NO FIREBASE</button>
+      
+      <div class="section">
+        <div class="section-title">📝 CARTA AUTOMÁTICA</div>
+        <textarea id="carta-text" readonly></textarea>
+        <button class="action-btn copy-btn" style="margin-top:10px" onclick="copyText()">📋 COPIAR TEXTO</button>
+      </div>
+    </div>
+
+    <div id="tab-ranking" class="hidden">
+      <div class="section">
+        <div class="section-title">🏆 RANKING GERAL</div>
+        <div id="ranking-list">Carregando...</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCFeqtsuT-4Q4e8EyrsEPRcIo3I6AmfEzE",
+      authDomain: "exkombeiros-24a9a.firebaseapp.com",
+      databaseURL: "https://exkombeiros-24a9a-default-rtdb.firebaseio.com",
+      projectId: "exkombeiros-24a9a",
+      storageBucket: "exkombeiros-24a9a.firebasestorage.app",
+      messagingSenderId: "507759690855",
+      appId: "1:507759690855:web:8a6ec18c9a98d7ee9900c2"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function showTab(tab) {
+      document.getElementById('tab-form').classList.toggle('hidden', tab !== 'form');
+      document.getElementById('tab-ranking').classList.toggle('hidden', tab !== 'ranking');
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      if(tab === 'ranking') loadRanking();
+    }
+
+    function selectOption(btn) {
+      const group = btn.parentElement;
+      group.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      
+      const section = btn.closest('.section');
+      const scoreDisplay = section.querySelector('.sec-score');
+      if(scoreDisplay) scoreDisplay.innerText = parseFloat(btn.dataset.value).toFixed(1);
+      
+      calculateTotal();
+    }
+
+    function calculateTotal() {
+      const weights = { energia: 0.25, banheiros: 0.20, acesso: 0.20, conexao: 0.10, cozinha: 0.25 };
+      let total = 0;
+      
+      document.querySelectorAll('.section[data-section]').forEach(sec => {
+        const type = sec.dataset.section;
+        const selected = sec.querySelector('.option-btn.selected');
+        const val = selected ? parseFloat(selected.dataset.value) : 1.0;
+        total += val * weights[type];
+      });
+
+      document.getElementById('final-score').innerText = total.toFixed(1);
+      updateCarta();
+    }
+
+    function updateCarta() {
+      const nome = document.getElementById('nome').value || '[Nome do Camping]';
+      const cidade = document.getElementById('cidade').value || '[Cidade]';
+      const uf = document.getElementById('estado').value || '[UF]';
+      const score = document.getElementById('final-score').innerText;
+      
+      const scores = {};
+      document.querySelectorAll('.section[data-section]').forEach(sec => {
+        const type = sec.dataset.section;
+        const scoreDisplay = sec.querySelector('.sec-score');
+        scores[type] = scoreDisplay ? scoreDisplay.innerText : "1.0";
+      });
+
+      const data = new Date().toLocaleDateString('pt-BR');
+
+      const texto = `Apresentação\nPrezada equipe do ${nome} — ${cidade} ${uf},\n\nSomos Rogério e Viviane, criadores do Guia Exkombeiros de Camping. Realizamos uma visita técnica em ${data} e compartilhamos abaixo os resultados.\n\nScore Técnico Final: ${score} / 5\n\n⚡ Energia: ${scores.energia} / 5\n🚿 Banheiros: ${scores.banheiros} / 5\n🚗 Acesso: ${scores.acesso} / 5\n📶 Conectividade: ${scores.conexao} / 5\n🍳 Cozinha e Infra: ${scores.cozinha} / 5\n\nAtenciosamente,\nRogério e Viviane\nGuia Exkombeiros`;
+      
+      const area = document.getElementById('carta-text');
+      if(area) area.value = texto;
+    }
+
+    function saveToFirebase() {
+      const nome = document.getElementById('nome').value;
+      if(!nome) return alert('Digite o nome do camping!');
+      
+      const dados = {
+        nome: nome,
+        cidade: document.getElementById('cidade').value,
+        estado: document.getElementById('estado').value,
+        nota: document.getElementById('final-score').innerText,
+        data: new Date().toISOString()
+      };
+
+      db.ref('campings').push(dados)
+        .then(() => alert('Salvo com sucesso!'))
+        .catch(e => alert('Erro ao salvar: ' + e.message));
+    }
+
+    function loadRanking() {
+      const list = document.getElementById('ranking-list');
+      db.ref('campings').orderByChild('nota').limitToLast(20).once('value', snap => {
+        let html = '';
+        snap.forEach(child => {
+          const c = child.val();
+          html = `<div style="padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between">
+                    <span>${c.nome} (${c.cidade})</span>
+                    <strong style="color:var(--primary)">★ ${c.nota}</strong>
+                  </div>` + html;
+        });
+        list.innerHTML = html || 'Nenhum camping avaliado.';
+      });
+    }
+
+    function copyText() {
+      const text = document.getElementById('carta-text').value;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => alert('Copiado!'));
+      } else {
+        const input = document.createElement('textarea');
+        input.value = text;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        alert('Copiado!');
+      }
+    }
+
+    window.onload = updateCarta;
+  </script>
+</body>
+</html>

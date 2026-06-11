@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Guia Exkombeiros - Público</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+
+  <style>
+    :root { --primary: #1b3d2f; --accent: #d4af37; --bg: #eae6df; --card-bg: #ffffff; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: var(--bg); color: var(--primary); }
+    
+    .header { background-color: var(--primary); color: white; padding: 40px 20px; text-align: center; border-bottom: 3px solid var(--accent); }
+    .logo { max-width: 150px; margin-bottom: 10px; }
+    .header h1 { font-family: 'Cinzel', serif; font-size: 22px; }
+
+    .search-container { padding: 20px; position: sticky; top: 0; background: var(--bg); z-index: 10; }
+    .search-input { width: 100%; padding: 15px; border-radius: 15px; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.05); outline: none; font-size: 16px; }
+
+    .container { max-width: 600px; margin: 0 auto; padding: 10px 20px; }
+    .card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--accent); }
+    .card-info h2 { font-family: 'Cinzel', serif; font-size: 16px; margin-bottom: 5px; }
+    .card-info p { font-size: 13px; color: #6b7280; font-weight: 500; }
+    .card-score { background: var(--primary); color: var(--accent); padding: 10px 15px; border-radius: 12px; font-family: 'Cinzel', serif; font-weight: 700; font-size: 18px; }
+
+    .empty { text-align: center; padding: 50px; color: #6b7280; }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <img src="5C4B6FA5-8E68-483A-A638-22B78B7764DD.png" alt="Logo" class="logo">
+    <h1>GUIA PÚBLICO EXKOMBEIROS</h1>
+  </header>
+
+  <div class="search-container">
+    <input type="text" id="search" class="search-input" placeholder="🔍 Buscar camping, cidade ou estado..." oninput="filter()">
+  </div>
+
+  <main class="container" id="list">
+    <div class="empty">Carregando campings...</div>
+  </main>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCFeqtsuT-4Q4e8EyrsEPRcIo3I6AmfEzE",
+      authDomain: "exkombeiros-24a9a.firebaseapp.com",
+      databaseURL: "https://exkombeiros-24a9a-default-rtdb.firebaseio.com",
+      projectId: "exkombeiros-24a9a",
+      storageBucket: "exkombeiros-24a9a.firebasestorage.app",
+      messagingSenderId: "507759690855",
+      appId: "1:507759690855:web:8a6ec18c9a98d7ee9900c2"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    let allData = [];
+
+    function load() {
+      db.ref('campings').on('value', snap => {
+        allData = [];
+        snap.forEach(child => {
+          const val = child.val();
+          // Garante que a nota seja um número válido para evitar o erro de NaN
+          val.nota = isNaN(parseFloat(val.nota)) ? 1.0 : parseFloat(val.nota);
+          allData.push(val);
+        });
+        allData.sort((a, b) => b.nota - a.nota);
+        render(allData);
+      });
+    }
+
+    function render(data) {
+      const container = document.getElementById('list');
+      if(data.length === 0) {
+        container.innerHTML = '<div class="empty">Nenhum camping encontrado.</div>';
+        return;
+      }
+      
+      container.innerHTML = data.map(c => `
+        <div class="card">
+          <div class="card-info">
+            <h2>${c.nome || 'Camping sem nome'}</h2>
+            <p>📍 ${c.cidade || '-'} - ${c.estado || '-'}</p>
+          </div>
+          <div class="card-score">★ ${c.nota.toFixed(1)}</div>
+        </div>
+      `).join('');
+    }
+
+    function filter() {
+      const term = document.getElementById('search').value.toLowerCase();
+      const filtered = allData.filter(c => 
+        (c.nome || "").toLowerCase().includes(term) || 
+        (c.cidade || "").toLowerCase().includes(term) || 
+        (c.estado || "").toLowerCase().includes(term)
+      );
+      render(filtered);
+    }
+
+    window.onload = load;
+  </script>
+</body>
+</html>
