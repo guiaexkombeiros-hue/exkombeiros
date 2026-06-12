@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia Exkombeiros - Campings Avaliados</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Georgia, serif; background: #f5f5f5; color: #333; }
+
+.header { background: #1a472a; color: white; padding: 32px 20px; text-align: center; }
+.header h1 { font-size: 32px; font-weight: normal; margin-bottom: 8px; }
+.header h1 em { font-style: italic; font-weight: 300; }
+.header p { font-size: 12px; letter-spacing: 2px; opacity: 0.8; }
+.stats { display: flex; justify-content: center; gap: 50px; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); flex-wrap: wrap; }
+.stat { text-align: center; }
+.stat-label { font-size: 11px; letter-spacing: 1px; opacity: 0.7; margin-bottom: 5px; }
+.stat-value { font-size: 32px; color: #d4af37; }
+
+.container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
+.search-box { background: white; padding: 20px; border-radius: 12px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.search-input { width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; font-family: Georgia, serif; }
+.search-input:focus { outline: none; border-color: #1a472a; }
+.filtros { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.filtro { padding: 7px 15px; border: 1px solid #ddd; background: white; border-radius: 20px; cursor: pointer; font-size: 13px; font-family: Georgia, serif; transition: all 0.15s; }
+.filtro:hover { border-color: #1a472a; color: #1a472a; }
+.filtro.active { background: #1a472a; color: white; border-color: #1a472a; }
+
+.ordenacao { display: flex; gap: 8px; margin-top: 10px; }
+.ord-btn { padding: 6px 14px; border: 1px solid #ddd; background: white; border-radius: 6px; cursor: pointer; font-size: 12px; font-family: Georgia, serif; }
+.ord-btn.active { background: #d4af37; color: #1a472a; border-color: #d4af37; font-weight: bold; }
+
+.camping-card { background: white; border-radius: 12px; margin: 15px 0; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: box-shadow 0.2s; }
+.camping-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+.camping-header { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.camping-info h3 { font-size: 20px; color: #1a472a; margin-bottom: 4px; font-weight: normal; }
+.camping-local { color: #777; font-size: 13px; }
+.camping-score-wrap { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+.score-circle { width: 64px; height: 64px; border-radius: 50%; border: 3px solid #d4af37; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.score-num { font-size: 22px; font-weight: 700; color: #d4af37; line-height: 1; }
+.score-sub { font-size: 10px; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; }
+.seta { font-size: 14px; color: #aaa; transition: transform 0.25s; }
+.seta.girada { transform: rotate(180deg); }
+
+.camping-detalhes { display: none; padding: 0 20px 20px; border-top: 1px solid #eee; }
+.camping-detalhes.aberto { display: block; }
+
+.info-metodologia { background: #f0f7f0; border-left: 4px solid #1a472a; padding: 12px 15px; margin: 15px 0 10px; font-size: 13px; color: #555; line-height: 1.5; }
+
+.categorias-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 12px; }
+.cat-bloco { background: #f9f9f9; border-radius: 8px; padding: 14px; }
+.cat-titulo { font-size: 13px; font-weight: bold; color: #1a472a; margin-bottom: 10px; }
+.cat-score { font-size: 18px; color: #d4af37; font-weight: bold; margin-bottom: 8px; }
+.item-linha { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; font-size: 12px; color: #555; margin-bottom: 5px; padding-bottom: 5px; border-bottom: 1px solid #eee; }
+.item-linha:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.item-nome { flex: 1; color: #777; }
+.item-valor { text-align: right; flex-shrink: 0; max-width: 55%; }
+.ponto-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; vertical-align: middle; flex-shrink: 0; }
+
+.vazio { text-align: center; padding: 60px 20px; color: #aaa; font-size: 16px; }
+.loading { text-align: center; padding: 60px 20px; color: #aaa; font-size: 16px; }
+.erro { text-align: center; padding: 40px 20px; color: #c0392b; font-size: 15px; background: #fdf0f0; border-radius: 8px; margin: 20px 0; }
+
+/* Barra de score por categoria */
+.mini-bar-wrap { height: 4px; background: #eee; border-radius: 2px; margin-top: 4px; }
+.mini-bar { height: 4px; border-radius: 2px; background: #d4af37; }
+
+/* Redes sociais */
+.redes { display: flex; justify-content: center; gap: 12px; margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.15); flex-wrap: wrap; }
+.rede-link { display: flex; align-items: center; gap: 7px; color: white; text-decoration: none; font-size: 13px; letter-spacing: 0.5px; opacity: 0.85; padding: 7px 14px; border: 1px solid rgba(255,255,255,0.25); border-radius: 20px; transition: all 0.2s; }
+.rede-link:hover { opacity: 1; background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.5); }
+.rede-link svg { flex-shrink: 0; }
+
+.footer { background: #1a472a; color: white; padding: 30px 20px; text-align: center; margin-top: 40px; }
+.footer-title { font-size: 18px; font-weight: normal; margin-bottom: 4px; }
+.footer-title em { font-style: italic; }
+.footer-sub { font-size: 12px; opacity: 0.6; letter-spacing: 1px; margin-bottom: 16px; }
+.footer-email { color: #d4af37; font-size: 13px; text-decoration: none; opacity: 0.9; }
+.footer-email:hover { opacity: 1; }
+
+@media (max-width: 480px) {
+  .header h1 { font-size: 26px; }
+  .stats { gap: 30px; }
+  .categorias-grid { grid-template-columns: 1fr; }
+  .redes { gap: 8px; }
+  .rede-link { font-size: 12px; padding: 6px 11px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Guia <em>Exkombeiros</em></h1>
+  <p>CAMPINGS AVALIADOS PARA TRAILER, MOTORHOME E VAN</p>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-label">CAMPINGS</div>
+      <div class="stat-value" id="totalCampings">–</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">ESTADOS</div>
+      <div class="stat-value" id="totalEstados">–</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">SCORE MÉDIO</div>
+      <div class="stat-value" id="scoreMedio">–</div>
+    </div>
+  </div>
+
+  <div class="redes">
+    <a class="rede-link" href="https://youtube.com/@exkombeiros?si=AxLls81wg_C4mym_" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+      YouTube
+    </a>
+    <a class="rede-link" href="https://www.instagram.com/exkombeiros?utm_source=qr" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8 0 3.2 0 3.6-.1 4.8-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1-3.2 0-3.6 0-4.8-.1-3.3-.1-4.8-1.7-4.9-4.9C2.2 15.6 2.2 15.2 2.2 12c0-3.2 0-3.6.1-4.8C2.4 3.9 4 2.3 7.2 2.3c1.2-.1 1.6-.1 4.8-.1zm0-2.2C8.7 0 8.3 0 7.1.1 2.7.3.3 2.7.1 7.1 0 8.3 0 8.7 0 12c0 3.3 0 3.7.1 4.9.2 4.4 2.6 6.8 7 7C8.3 24 8.7 24 12 24c3.3 0 3.7 0 4.9-.1 4.4-.2 6.8-2.6 7-7 .1-1.2.1-1.6.1-4.9 0-3.3 0-3.7-.1-4.9C23.7 2.7 21.3.3 16.9.1 15.7 0 15.3 0 12 0zm0 5.8a6.2 6.2 0 1 0 0 12.4A6.2 6.2 0 0 0 12 5.8zm0 10.2a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-11.8a1.4 1.4 0 1 0 0 2.8 1.4 1.4 0 0 0 0-2.8z"/></svg>
+      Instagram
+    </a>
+    <a class="rede-link" href="https://www.tiktok.com/@exkombeiros" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.6 3.3A4.9 4.9 0 0 1 14.8 0h-3.6v16.4a2.9 2.9 0 0 1-2.9 2.5 2.9 2.9 0 0 1-2.9-2.9 2.9 2.9 0 0 1 2.9-2.9c.3 0 .5 0 .8.1V9.5a6.5 6.5 0 0 0-.8-.1A6.5 6.5 0 0 0 1.8 16a6.5 6.5 0 0 0 6.5 6.5A6.5 6.5 0 0 0 14.8 16V8.2a8.4 8.4 0 0 0 4.8 1.5V6.1a4.9 4.9 0 0 1-3-.8z"/></svg>
+      TikTok
+    </a>
+  </div>
+</div>
+
+<div class="container">
+  <div class="search-box">
+    <input type="text" class="search-input" id="busca" placeholder="Buscar por nome, cidade ou estado…">
+    <div class="filtros" id="filtrosEstado"></div>
+    <div class="ordenacao">
+      <button class="ord-btn active" data-ord="score">Melhor score</button>
+      <button class="ord-btn" data-ord="data">Mais recente</button>
+      <button class="ord-btn" data-ord="nome">A–Z</button>
+    </div>
+  </div>
+
+  <div id="listaCampings"><div class="loading">⏳ Carregando campings…</div></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCFeqtsuT-4Q4e8EyrsEPRcIo3I6AmfEzE",
+  authDomain: "exkombeiros-24a9a.firebaseapp.com",
+  databaseURL: "https://exkombeiros-24a9a-default-rtdb.firebaseio.com",
+  projectId: "exkombeiros-24a9a",
+  storageBucket: "exkombeiros-24a9a.firebasestorage.app",
+  messagingSenderId: "507759690855",
+  appId: "1:507759690855:web:8a6ec18c9a98d7ee9900c2"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+let avaliacoes = [];
+let filtroEstado = 'todos';
+let ordenacao = 'score';
+
+// ── Cor do ponto por pontuação ────────────────────────────────────────────────
+function corPonto(pontos) {
+  if (pontos >= 4) return '#27ae60';
+  if (pontos >= 2) return '#f39c12';
+  return '#e74c3c';
+}
+
+// ── Calcula média de uma categoria ───────────────────────────────────────────
+function mediaCat(itens) {
+  if (!itens || itens.length === 0) return 0;
+  const soma = itens.reduce((s, i) => s + (i.pontos || 0), 0);
+  return soma / itens.length;
+}
+
+// ── Carrega Firebase ──────────────────────────────────────────────────────────
+async function carregarDados() {
+  try {
+    const snapshot = await get(ref(db, 'campings'));
+    if (snapshot.exists()) {
+      avaliacoes = Object.values(snapshot.val());
+    } else {
+      avaliacoes = [];
+    }
+    init();
+  } catch(e) {
+    console.error(e);
+    document.getElementById('listaCampings').innerHTML =
+      `<div class="erro">Erro ao carregar dados do Firebase.<br><small>${e.message}</small></div>`;
+  }
+}
+
+function init() {
+  renderStats();
+  renderFiltros();
+  renderCampings();
+  document.getElementById('busca').addEventListener('input', renderCampings);
+  document.querySelectorAll('.ord-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.ord-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      ordenacao = btn.dataset.ord;
+      renderCampings();
+    });
+  });
+}
+
+function renderStats() {
+  document.getElementById('totalCampings').textContent = avaliacoes.length;
+  const estados = new Set(avaliacoes.map(a => a.estado)).size;
+  document.getElementById('totalEstados').textContent = estados;
+  const media = avaliacoes.length > 0
+    ? (avaliacoes.reduce((s, a) => s + parseFloat(a.score), 0) / avaliacoes.length).toFixed(1)
+    : '0.0';
+  document.getElementById('scoreMedio').textContent = media;
+}
+
+function renderFiltros() {
+  const estados = [...new Set(avaliacoes.map(a => a.estado))].sort();
+  const container = document.getElementById('filtrosEstado');
+  container.innerHTML = '<button class="filtro active" data-estado="todos">Todos os estados</button>';
+  estados.forEach(uf => {
+    container.innerHTML += `<button class="filtro" data-estado="${uf}">${uf}</button>`;
+  });
+  container.querySelectorAll('.filtro').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      container.querySelectorAll('.filtro').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      filtroEstado = e.target.dataset.estado;
+      renderCampings();
+    });
+  });
+}
+
+function renderCampings() {
+  const busca = document.getElementById('busca').value.toLowerCase();
+  const container = document.getElementById('listaCampings');
+
+  let filtrados = avaliacoes.filter(av => {
+    const matchBusca = (av.nomeCompleto || av.nome).toLowerCase().includes(busca) ||
+                       (av.cidade || '').toLowerCase().includes(busca) ||
+                       (av.estado || '').toLowerCase().includes(busca);
+    const matchEstado = filtroEstado === 'todos' || av.estado === filtroEstado;
+    return matchBusca && matchEstado;
+  });
+
+  // Ordenação
+  if (ordenacao === 'score') {
+    filtrados.sort((a, b) => parseFloat(b.score) - parseFloat(a.score));
+  } else if (ordenacao === 'data') {
+    filtrados.sort((a, b) => {
+      const toDate = d => { const p = d.split('/'); return new Date(p[2], p[1]-1, p[0]); };
+      return toDate(b.data) - toDate(a.data);
+    });
+  } else {
+    filtrados.sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
+  }
+
+  if (filtrados.length === 0) {
+    container.innerHTML = '<div class="vazio">Nenhum camping encontrado.</div>';
+    return;
+  }
+
+  container.innerHTML = '';
+  filtrados.forEach((av, idx) => {
+    const card = document.createElement('div');
+    card.className = 'camping-card';
+    const scoreVal = parseFloat(av.score);
+
+    // Detalhes por categoria
+    let detHTML = '';
+    if (av.detalhesCategoria && av.detalhesCategoria.length > 0) {
+      detHTML = '<div class="categorias-grid">';
+      av.detalhesCategoria.forEach(cat => {
+        const media = mediaCat(cat.itens);
+        const barWidth = Math.round((media / 5) * 100);
+        let itensHTML = '';
+        cat.itens.forEach(item => {
+          itensHTML += `
+            <div class="item-linha">
+              <span class="item-nome">${item.nome}</span>
+              <span class="item-valor">
+                <span class="ponto-dot" style="background:${corPonto(item.pontos)}"></span>${item.opcaoSelecionada}
+              </span>
+            </div>`;
+        });
+        detHTML += `
+          <div class="cat-bloco">
+            <div class="cat-titulo">${cat.nome}</div>
+            <div class="cat-score">${media.toFixed(1)} / 5</div>
+            <div class="mini-bar-wrap"><div class="mini-bar" style="width:${barWidth}%"></div></div>
+            <div style="margin-top:10px">${itensHTML}</div>
+          </div>`;
+      });
+      detHTML += '</div>';
+    } else {
+      detHTML = '<p style="color:#aaa;font-size:14px;margin-top:15px;">Detalhes não disponíveis para esta avaliação.</p>';
+    }
+
+    card.innerHTML = `
+      <div class="camping-header" onclick="toggleDetalhes('${idx}')">
+        <div class="camping-info">
+          <h3>${av.nomeCompleto || av.nome}</h3>
+          <div class="camping-local">${av.cidade} / ${av.estado} &nbsp;·&nbsp; visitado em ${av.data}</div>
+        </div>
+        <div class="camping-score-wrap">
+          <div class="score-circle">
+            <div class="score-num">${scoreVal.toFixed(1)}</div>
+            <div class="score-sub">/ 5</div>
+          </div>
+          <div class="seta" id="seta-${idx}">▼</div>
+        </div>
+      </div>
+      <div class="camping-detalhes" id="detalhes-${idx}">
+        <div class="info-metodologia">
+          <strong>Metodologia Exkombeiros:</strong> Avaliação técnica baseada em critérios mensuráveis — energia, água, piso, banheiros, conectividade e serviços. Não mede experiência subjetiva nem o acolhimento do local.
+        </div>
+        ${detHTML}
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+window.toggleDetalhes = function(idx) {
+  const detalhes = document.getElementById(`detalhes-${idx}`);
+  const seta = document.getElementById(`seta-${idx}`);
+  detalhes.classList.toggle('aberto');
+  seta.classList.toggle('girada');
+};
+
+carregarDados();
+
+</script>
+
+<div class="footer">
+  <div class="footer-title">Guia <em>Exkombeiros</em></div>
+  <div class="footer-sub">AVALIAÇÃO TÉCNICA DE CAMPINGS</div>
+  <a class="footer-email" href="mailto:guiaexkombeiros@gmail.com">📧 guiaexkombeiros@gmail.com</a>
+  <div class="redes" style="border-top:1px solid rgba(255,255,255,0.15); margin-top:16px; padding-top:16px;">
+    <a class="rede-link" href="https://youtube.com/@exkombeiros?si=AxLls81wg_C4mym_" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+      YouTube
+    </a>
+    <a class="rede-link" href="https://www.instagram.com/exkombeiros?utm_source=qr" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8 0 3.2 0 3.6-.1 4.8-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.9.1-3.2 0-3.6 0-4.8-.1-3.3-.1-4.8-1.7-4.9-4.9C2.2 15.6 2.2 15.2 2.2 12c0-3.2 0-3.6.1-4.8C2.4 3.9 4 2.3 7.2 2.3c1.2-.1 1.6-.1 4.8-.1zm0-2.2C8.7 0 8.3 0 7.1.1 2.7.3.3 2.7.1 7.1 0 8.3 0 8.7 0 12c0 3.3 0 3.7.1 4.9.2 4.4 2.6 6.8 7 7C8.3 24 8.7 24 12 24c3.3 0 3.7 0 4.9-.1 4.4-.2 6.8-2.6 7-7 .1-1.2.1-1.6.1-4.9 0-3.3 0-3.7-.1-4.9C23.7 2.7 21.3.3 16.9.1 15.7 0 15.3 0 12 0zm0 5.8a6.2 6.2 0 1 0 0 12.4A6.2 6.2 0 0 0 12 5.8zm0 10.2a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-11.8a1.4 1.4 0 1 0 0 2.8 1.4 1.4 0 0 0 0-2.8z"/></svg>
+      Instagram
+    </a>
+    <a class="rede-link" href="https://www.tiktok.com/@exkombeiros" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.6 3.3A4.9 4.9 0 0 1 14.8 0h-3.6v16.4a2.9 2.9 0 0 1-2.9 2.5 2.9 2.9 0 0 1-2.9-2.9 2.9 2.9 0 0 1 2.9-2.9c.3 0 .5 0 .8.1V9.5a6.5 6.5 0 0 0-.8-.1A6.5 6.5 0 0 0 1.8 16a6.5 6.5 0 0 0 6.5 6.5A6.5 6.5 0 0 0 14.8 16V8.2a8.4 8.4 0 0 0 4.8 1.5V6.1a4.9 4.9 0 0 1-3-.8z"/></svg>
+      TikTok
+    </a>
+  </div>
+</div>
+
+</body>
+</html>
