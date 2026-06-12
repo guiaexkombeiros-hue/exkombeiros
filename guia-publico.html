@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia Exkombeiros - Consulte os Campings</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Georgia, serif; background: #f5f5f5; color: #333; }
+      .header { background: #1a472a; color: white; padding: 32px 20px; text-align: center; }
+      .header h1 { font-size: 32px; font-weight: normal; margin-bottom: 8px; }
+      .header h1 em { font-style: italic; font-weight: 300; }
+      .header p { font-size: 14px; letter-spacing: 2px; opacity: 0.9; }
+      .stats { display: flex; justify-content: center; gap: 60px; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); }
+      .stat { text-align: center; }
+      .stat-label { font-size: 11px; letter-spacing: 1px; opacity: 0.7; margin-bottom: 5px; }
+      .stat-value { font-size: 32px; color: #d4af37; }
+      .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+      .search-box { background: white; padding: 20px; border-radius: 12px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+      .search-input { width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
+      .filtros { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+      .filtro { padding: 8px 16px; border: 1px solid #ddd; background: white; border-radius: 20px; cursor: pointer; font-size: 14px; }
+      .filtro.active { background: #1a472a; color: white; border-color: #1a472a; }
+      .camping-card { background: white; border-radius: 12px; margin: 15px 0; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+      .camping-header { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+      .camping-header:hover { background: #f9f9f9; }
+      .camping-info h3 { font-size: 20px; color: #1a472a; margin-bottom: 4px; }
+      .camping-local { color: #666; font-size: 14px; }
+      .camping-score { text-align: center; }
+      .score-num { font-size: 36px; font-weight: 700; color: #d4af37; line-height: 1; }
+      .score-label { font-size: 11px; color: #999; text-transform: uppercase; }
+      .camping-detalhes { display: none; padding: 0 20px 20px; border-top: 1px solid #eee; }
+      .camping-detalhes.aberto { display: block; }
+      .detalhe-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px; }
+      .detalhe-item { background: #f9f9f9; padding: 12px; border-radius: 8px; }
+      .detalhe-cat { font-size: 12px; color: #1a472a; font-weight: 600; text-transform: uppercase; margin-bottom: 6px; }
+      .detalhe-valor { font-size: 15px; color: #333; }
+      .detalhe-pontos { color: #999; font-size: 13px; margin-left: 6px; }
+      .vazio { text-align: center; padding: 60px 20px; color: #999; }
+      .seta { transition: transform 0.3s; color: #999; }
+      .seta.girada { transform: rotate(180deg); }
+      .obs { background: #fff9e6; border-left: 4px solid #d4af37; padding: 12px; margin: 15px 0; font-size: 14px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Guia <em>Exkombeiros</em></h1>
+        <p>CONSULTE OS CAMPINGS AVALIADOS</p>
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-label">CAMPINGS</div>
+                <div class="stat-value" id="totalCampings">0</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">ESTADOS</div>
+                <div class="stat-value" id="totalEstados">0</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">SCORE MÉDIO</div>
+                <div class="stat-value" id="scoreMedio">0.0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="search-box">
+            <input type="text" class="search-input" id="busca" placeholder="Buscar por nome, cidade ou estado...">
+            <div class="filtros" id="filtrosEstado"></div>
+        </div>
+        <div id="listaCampings"></div>
+    </div>
+
+    <!-- CARREGA OS DADOS DO ARQUIVO dados.js -->
+    <script src="dados.js"></script>
+    
+    <script>
+        // Se não existir o arquivo dados.js, usa array vazio
+        let avaliacoes = typeof DADOS_CAMPINGS!== 'undefined'? DADOS_CAMPINGS : [];
+        let filtroEstado = 'todos';
+
+        const categorias = [
+            { nome: 'Energia Elétrica', peso: 20, itens: [
+                { nome: 'TENSÃO DISPONÍVEL', opcoes: ['220V e 110V','Só 220V','Só 110V','Não tem'] },
+                { nome: 'ESTABILIDADE DA TENSÃO', opcoes: ['Estável','Oscila pouco','Oscila muito','Não tem'] },
+                { nome: 'AMPERAGEM POR PONTO', opcoes: ['20A ou mais','15A','10A','Menos de 10A','Não tem'] },
+                { nome: 'TIPO DE TOMADA', opcoes: ['Padrão novo (NBR)','Padrão antigo','Adaptador necessário','Não tem'] }
+            ]},
+            { nome: 'Banheiros', peso: 15, itens: [
+                { nome: 'PROPORÇÃO BANHEIROS / PARCELAS', opcoes: ['1 para cada 4','1 para cada 6','1 para cada 10','Mais de 10'] },
+                { nome: 'CHUVEIRO QUENTE', opcoes: ['Todos','Maioria','Alguns','Não tem'] },
+                { nome: 'LIMPEZA', opcoes: ['Excelente','Boa','Regular','Ruim'] },
+                { nome: 'ACESSIBILIDADE', opcoes: ['Total','Parcial','Não tem'] }
+            ]},
+            { nome: 'Acesso e Terreno', peso: 15, itens: [
+                { nome: 'ENTRADA PARA TRAILER / MOTORHOME', opcoes: ['Larga','Normal','Apertada','Não entra'] },
+                { nome: 'PISO — ÁREA DE TRAILER / MOTORHOME', opcoes: ['Britado/Asfalto','Grama batida','Grama / Terra','Areia fofa'] },
+                { nome: 'NÍVEL DO TERRENO', opcoes: ['Plano','Leve inclinação','Muito inclinado'] },
+                { nome: 'ESPAÇO PARA MANOBRA', opcoes: ['Amplo','Suficiente','Apertado','Não tem'] },
+                { nome: 'SOMBRA NAS PARCELAS', opcoes: ['Total','Parcial','Sem sombra'] }
+            ]},
+            { nome: 'Água', peso: 10, itens: [
+                { nome: 'QUALIDADE / POTABILIDADE', opcoes: ['Tratada/Concessionária','Poço / filtrar','Não potável'] },
+                { nome: 'PRESSÃO', opcoes: ['Forte','Normal','Fraca','Não tem'] },
+                { nome: 'PONTOS DE ÁGUA', opcoes: ['Em todas parcelas','Compartilhados','Poucos pontos','Não tem'] }
+            ]},
+            { nome: 'Conectividade', peso: 10, itens: [
+                { nome: 'SINAL DE CELULAR', opcoes: ['Todas operadoras','Algumas','Sem sinal'] },
+                { nome: 'WI-FI DO CAMPING', opcoes: ['Rápido','Lento','Não tem'] }
+            ]},
+            { nome: 'Infraestrutura', peso: 10, itens: [
+                { nome: 'DESCARTE DE LIXO', opcoes: ['Coleta seletiva','Lixeira comum','Não tem'] },
+                { nome: 'DESCARTE DE ESGOTO (TRAILER)', opcoes: ['Ponto próprio','Na rede geral','Não tem'] },
+                { nome: 'SEGURANÇA DO CAMPING', opcoes: ['Portaria 24h','Portaria parcial','Sem controle'] }
+            ]},
+            { nome: 'Cozinha Compartilhada', peso: 10, itens: [
+                { nome: 'POSSUI COZINHA COMPARTILHADA?', opcoes: ['Completa','Básica','Não tem'] },
+                { nome: 'UTENSÍLIOS DISPONÍVEIS', opcoes: ['Completos','Básicos','Quase nada','Não tem'] }
+            ]},
+            { nome: 'Conveniência', peso: 10, itens: [
+                { nome: 'MERCADO PRÓXIMO', opcoes: ['Até 1km','Até 3km','Até 5km','Mais de 5km'] },
+                { nome: 'LOJA DE CONVENIÊNCIA', opcoes: ['No camping','Próximo','Não tem'] },
+                { nome: 'RESTAURANTE', opcoes: ['No camping','Próximo','Não tem'] }
+            ]}
+        ];
+
+        function init() {
+            renderStats();
+            renderFiltros();
+            renderCampings();
+            document.getElementById('busca').addEventListener('input', renderCampings);
+        }
+
+        function renderStats() {
+            document.getElementById('totalCampings').textContent = avaliacoes.length;
+            const estados = new Set(avaliacoes.map(a => a.estado)).size;
+            document.getElementById('totalEstados').textContent = estados;
+            const media = avaliacoes.length > 0? (avaliacoes.reduce((sum, a) => sum + a.score, 0) / avaliacoes.length).toFixed(1) : '0.0';
+            document.getElementById('scoreMedio').textContent = media;
+        }
+
+        function renderFiltros() {
+            const estados = [...new Set(avaliacoes.map(a => a.estado))].sort();
+            const container = document.getElementById('filtrosEstado');
+            container.innerHTML = '<button class="filtro active" data-estado="todos">Todos</button>';
+            estados.forEach(uf => {
+                container.innerHTML += `<button class="filtro" data-estado="${uf}">${uf}</button>`;
+            });
+            container.querySelectorAll('.filtro').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    container.querySelectorAll('.filtro').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    filtroEstado = e.target.dataset.estado;
+                    renderCampings();
+                });
+            });
+        }
+
+        function renderCampings() {
+            const busca = document.getElementById('busca').value.toLowerCase();
+            const container = document.getElementById('listaCampings');
+
+            let filtrados = avaliacoes.filter(av => {
+                const matchBusca = av.nome.toLowerCase().includes(busca) ||
+                                 av.cidade.toLowerCase().includes(busca) ||
+                                 av.estado.toLowerCase().includes(busca);
+                const matchEstado = filtroEstado === 'todos' || av.estado === filtroEstado;
+                return matchBusca && matchEstado;
+            }).sort((a, b) => b.score - a.score);
+
+            if (filtrados.length === 0) {
+                container.innerHTML = '<div class="vazio">Nenhum camping encontrado</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            filtrados.forEach(av => {
+                const card = document.createElement('div');
+                card.className = 'camping-card';
+
+                let detalhesHTML = '<div class="obs"><strong>Metodologia:</strong> Avaliação técnica baseada em critérios mensuráveis. Não mede experiência subjetiva.</div><div class="detalhe-grid">';
+                
+                categorias.forEach((cat, catIdx) => {
+                    if (av.selecoes[catIdx]!== undefined) {
+                        cat.itens.forEach((item, itemIdx) => {
+                            const opcaoIdx = av.selecoes[catIdx];
+                            const opcaoTexto = item.opcoes[opcaoIdx] || 'Não avaliado';
+                            detalhesHTML += `
+                                <div class="detalhe-item">
+                                    <div class="detalhe-cat">${item.nome}</div>
+                                    <div class="detalhe-valor">${opcaoTexto}</div>
+                                </div>`;
+                        });
+                    }
+                });
+                detalhesHTML += '</div>';
+
+                card.innerHTML = `
+                    <div class="camping-header" onclick="toggleDetalhes(${av.id})">
+                        <div class="camping-info">
+                            <h3>${av.nome}</h3>
+                            <div class="camping-local">${av.cidade}/${av.estado} • Visitado em ${av.data}</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 20px;">
+                            <div class="camping-score">
+                                <div class="score-num">${av.score.toFixed(1)}</div>
+                                <div class="score-label">Score</div>
+                            </div>
+                            <div class="seta" id="seta-${av.id}">▼</div>
+                        </div>
+                    </div>
+                    <div class="camping-detalhes" id="detalhes-${av.id}">${detalhesHTML}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function toggleDetalhes(id) {
+            const detalhes = document.getElementById(`detalhes-${id}`);
+            const seta = document.getElementById(`seta-${id}`);
+            detalhes.classList.toggle('aberto');
+            seta.classList.toggle('girada');
+        }
+
+        init();
+    </script>
+</body>
+</html>
