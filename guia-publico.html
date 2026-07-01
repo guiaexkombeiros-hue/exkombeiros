@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia ExKombeiros de Camping</title>
+
+<!-- PWA: instalação via navegador, sem loja de apps -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1a472a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Guia ExKombeiros">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SNHY472YGN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-SNHY472YGN');
+</script>
+<!-- Google AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2782563981933126" crossorigin="anonymous"></script>
+<style>
+:root {
+  --verde:   #1a472a;
+  --verde2:  #245c38;
+  --dourado: #d4af37;
+  --dourado2:#b8962e;
+  --laranja: #e07b1a;
+  --creme:   #f5f0e8;
+  --creme2:  #ede6d6;
+  --escuro:  #111a13;
+  --cinza:   #5a6b5e;
+  --branco:  #ffffff;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; background: var(--creme); color: var(--escuro); overflow-x: hidden; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(26,71,42,0.97);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 32px;
+  border-bottom: 2px solid var(--dourado);
+}
+.nav-logo-img { height: 48px; width: 48px; border-radius: 50%; object-fit: cover; border: 2px solid var(--dourado); }
+.nav-brand { font-family: 'Playfair Display', serif; font-size: 17px; color: var(--dourado); margin-left: 10px; line-height: 1; }
+.nav-brand span { color: rgba(255,255,255,0.6); font-size: 10px; display: block; font-family: 'Inter', sans-serif; letter-spacing: 2px; font-weight: 300; margin-top: 2px; }
+.nav-left { display: flex; align-items: center; }
+.nav-links { display: flex; gap: 24px; }
+.nav-links a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 13px; letter-spacing: 1px; font-weight: 500; text-transform: uppercase; transition: color 0.2s; }
+.nav-links a:hover { color: var(--dourado); }
+.nav-cta { background: var(--dourado); color: var(--verde) !important; padding: 8px 18px; border-radius: 20px; font-weight: 700 !important; }
+.nav-cta:hover { background: var(--dourado2) !important; }
+
+/* ── BANNERS DE AUTOPROMOÇÃO ── */
+.ad-banner {
+  display: flex; align-items: center; justify-content: center;
+  padding: 0; text-align: center; overflow: hidden;
+}
+.ad-banner.topo { margin-top: 70px; }
+
+.promo-topo {
+  width: 100%; background: #0d1f11;
+  border-top: 2px solid var(--dourado); border-bottom: 2px solid var(--dourado);
+  padding: 14px 24px;
+  display: flex; align-items: center; justify-content: center; gap: 20px;
+  flex-wrap: wrap;
+}
+.promo-topo-text { color: rgba(255,255,255,0.85); font-size: 14px; letter-spacing: 0.3px; }
+.promo-topo-text strong { color: var(--dourado); }
+.promo-topo-btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.promo-topo-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 16px; border-radius: 20px;
+  font-size: 12px; font-weight: 700; text-decoration: none;
+  letter-spacing: 0.5px; transition: opacity 0.2s;
+  white-space: nowrap;
+}
+.promo-topo-btn:hover { opacity: 0.85; }
+.promo-topo-btn.yt  { background: #ff0000; color: #fff; }
+.promo-topo-btn.ig  { background: linear-gradient(135deg,#e1306c,#833ab4); color: #fff; }
+.promo-topo-btn.tt  { background: #fff; color: #010101; }
+
+.promo-meio {
+  width: 100%; background: var(--verde);
+  border-top: 3px solid var(--dourado); border-bottom: 3px solid var(--dourado);
+  padding: 40px 24px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.promo-meio::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 100% at 50% 0%, rgba(212,175,55,0.1) 0%, transparent 70%);
+}
+.promo-meio-eyebrow {
+  position: relative; z-index: 1;
+  font-size: 10px; letter-spacing: 4px; color: var(--dourado);
+  text-transform: uppercase; font-weight: 600; margin-bottom: 12px;
+}
+.promo-meio h3 {
+  position: relative; z-index: 1;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(22px, 4vw, 36px); color: var(--branco);
+  margin-bottom: 10px; line-height: 1.2;
+}
+.promo-meio h3 em { color: var(--dourado); font-style: italic; }
+.promo-meio p {
+  position: relative; z-index: 1;
+  color: rgba(255,255,255,0.6); font-size: 14px;
+  max-width: 500px; margin: 0 auto 28px; line-height: 1.6;
+}
+.promo-meio-btns {
+  position: relative; z-index: 1;
+  display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+}
+.promo-meio-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 24px; border-radius: 6px;
+  font-size: 14px; font-weight: 700; text-decoration: none;
+  transition: all 0.2s;
+}
+.promo-meio-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+.promo-meio-btn.yt  { background: #ff0000; color: #fff; }
+.promo-meio-btn.ig  { background: linear-gradient(135deg,#e1306c,#833ab4); color: #fff; }
+.promo-meio-btn.tt  { background: #fff; color: #010101; }
+.promo-meio-btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+.promo-lateral {
+  background: var(--verde); border: 2px solid var(--dourado);
+  border-radius: 10px; padding: 28px 20px; text-align: center;
+  position: sticky; top: 90px;
+}
+.promo-lateral-logo {
+  width: 80px; height: 80px; border-radius: 50%; object-fit: cover;
+  border: 3px solid var(--dourado); margin: 0 auto 16px; display: block;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+.promo-lateral h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px; color: var(--dourado); margin-bottom: 6px;
+}
+.promo-lateral p {
+  font-size: 13px; color: rgba(255,255,255,0.6);
+  line-height: 1.6; margin-bottom: 20px;
+}
+.promo-lateral-divider {
+  border: none; border-top: 1px solid rgba(255,255,255,0.1);
+  margin: 16px 0;
+}
+.promo-lateral-redes { display: flex; flex-direction: column; gap: 10px; }
+.promo-lateral-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 16px; border-radius: 6px;
+  font-size: 13px; font-weight: 600; text-decoration: none;
+  transition: all 0.2s;
+}
+.promo-lateral-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+.promo-lateral-btn.yt  { background: #ff0000; color: #fff; }
+.promo-lateral-btn.ig  { background: linear-gradient(135deg,#e1306c,#833ab4); color: #fff; }
+.promo-lateral-btn.tt  { background: #fff; color: #010101; }
+.promo-lateral-btn svg { width: 15px; height: 15px; fill: currentColor; }
+.promo-lateral-stats {
+  display: flex; justify-content: space-around; margin-bottom: 16px;
+}
+.promo-lateral-stat { text-align: center; }
+.promo-lateral-stat strong { display: block; color: var(--dourado); font-size: 18px; font-family: 'Playfair Display', serif; }
+.promo-lateral-stat span { font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 1px; }
+
+.promo-prefooter {
+  width: 100%; background: #0d1f11;
+  border-top: 2px solid rgba(212,175,55,0.3);
+  padding: 20px 24px;
+  display: flex; align-items: center; justify-content: center;
+  gap: 20px; flex-wrap: wrap; text-align: center;
+}
+.promo-prefooter-text { color: rgba(255,255,255,0.6); font-size: 13px; }
+.promo-prefooter-text strong { color: var(--dourado); display: block; font-size: 15px; margin-bottom: 2px; }
+.promo-prefooter-btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.promo-prefooter-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 18px; border-radius: 20px;
+  font-size: 13px; font-weight: 700; text-decoration: none;
+  transition: opacity 0.2s;
+}
+.promo-prefooter-btn:hover { opacity: 0.85; }
+.promo-prefooter-btn.yt  { background: #ff0000; color: #fff; }
+.promo-prefooter-btn.ig  { background: linear-gradient(135deg,#e1306c,#833ab4); color: #fff; }
+.promo-prefooter-btn.tt  { background: #fff; color: #010101; }
+
+/* ── HERO ── */
+.hero {
+  background: var(--escuro);
+  position: relative;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  overflow: hidden;
+  padding: 80px 24px 60px;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 30%, rgba(26,71,42,0.75) 0%, transparent 70%),
+              linear-gradient(180deg, #0d1f11 0%, #1a3020 50%, #0d1f11 100%);
+}
+.hero-texture {
+  position: absolute; inset: 0; opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+}
+.hero-logo {
+  position: relative; z-index: 2;
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--dourado);
+  box-shadow: 0 0 80px rgba(212,175,55,0.35), 0 20px 60px rgba(0,0,0,0.6);
+  margin-bottom: 32px;
+  animation: float 5s ease-in-out infinite;
+}
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+.hero-eyebrow { position:relative;z-index:2; font-size:11px;letter-spacing:4px;color:var(--dourado);text-transform:uppercase;font-weight:600;margin-bottom:14px; }
+.hero h1 { position:relative;z-index:2; font-family:'Playfair Display',serif; font-size:clamp(42px,8vw,78px); color:var(--branco); line-height:1; margin-bottom:6px; }
+.hero h1 em { color:var(--dourado); font-style:italic; }
+.hero-sub { position:relative;z-index:2; font-size:12px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:24px;font-weight:300; }
+.hero-desc { position:relative;z-index:2; max-width:520px;font-size:17px;line-height:1.75;color:rgba(255,255,255,0.72);margin-bottom:40px; }
+.hero-btns { position:relative;z-index:2; display:flex;gap:14px;flex-wrap:wrap;justify-content:center; }
+.btn-primary { background:var(--dourado);color:var(--verde);padding:16px 34px;border-radius:4px;font-weight:700;font-size:15px;text-decoration:none;letter-spacing:0.5px;transition:all 0.2s;border:2px solid var(--dourado);display:inline-flex;align-items:center;gap:8px; }
+.btn-primary:hover { background:var(--dourado2);border-color:var(--dourado2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,175,55,0.3); }
+.btn-secondary { background:transparent;color:var(--branco);padding:16px 34px;border-radius:4px;font-weight:600;font-size:15px;text-decoration:none;letter-spacing:0.5px;transition:all 0.2s;border:2px solid rgba(255,255,255,0.3); }
+.btn-secondary:hover { border-color:var(--dourado);color:var(--dourado);transform:translateY(-2px); }
+.hero-stats { position:relative;z-index:2; display:flex;gap:40px;margin-top:52px;border-top:1px solid rgba(255,255,255,0.1);padding-top:40px; }
+.hstat { text-align:center; }
+.hstat-n { font-family:'Playfair Display',serif;font-size:42px;color:var(--dourado);font-weight:700;line-height:1; }
+.hstat-l { font-size:10px;color:rgba(255,255,255,0.45);letter-spacing:2px;margin-top:6px;text-transform:uppercase; }
+
+/* ── COMO FUNCIONA ── */
+.como { background:var(--verde);padding:96px 24px;text-align:center; }
+.section-eyebrow { font-size:11px;letter-spacing:4px;text-transform:uppercase;font-weight:600;margin-bottom:14px; }
+.como .section-eyebrow { color:var(--dourado); }
+.como h2 { font-family:'Playfair Display',serif;font-size:clamp(30px,5vw,50px);color:var(--branco);margin-bottom:14px;line-height:1.1; }
+.como-sub { color:rgba(255,255,255,0.6);font-size:16px;max-width:480px;margin:0 auto 60px;line-height:1.65; }
+.passos { display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:2px;max-width:900px;margin:0 auto; }
+.passo { background:rgba(255,255,255,0.05);padding:40px 26px;transition:background 0.2s; }
+.passo:hover { background:rgba(255,255,255,0.09); }
+.passo-icon { font-size:34px;margin-bottom:18px;display:block; }
+.passo h3 { font-family:'Playfair Display',serif;font-size:19px;color:var(--dourado);margin-bottom:10px; }
+.passo p { color:rgba(255,255,255,0.62);font-size:14px;line-height:1.7; }
+
+/* ── AD MEIO ── */
+.ad-meio { background:#f0ebe0;padding:28px 24px;text-align:center;border-top:1px solid #ddd;border-bottom:1px solid #ddd; }
+
+/* ── METODOLOGIA ── */
+.metodologia { background:var(--creme);padding:96px 24px; }
+.met-inner { max-width:1000px;margin:0 auto; }
+.met-inner h2 { font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,46px);color:var(--verde);margin-bottom:14px;text-align:center; }
+.met-sub { text-align:center;color:var(--cinza);font-size:15px;max-width:540px;margin:0 auto 56px;line-height:1.7; }
+.criterios { display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px; }
+.criterio { background:var(--branco);border-radius:8px;padding:26px 20px;border-left:4px solid var(--dourado);box-shadow:0 2px 12px rgba(0,0,0,0.06);transition:transform 0.2s,box-shadow 0.2s; }
+.criterio:hover { transform:translateY(-4px);box-shadow:0 8px 28px rgba(0,0,0,0.12); }
+.crit-topo { display:flex;align-items:center;gap:10px;margin-bottom:10px; }
+.crit-icon { font-size:22px; }
+.crit-nome { font-size:13px;font-weight:700;color:var(--verde); }
+.crit-peso { display:inline-block;background:var(--verde);color:var(--dourado);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:8px;letter-spacing:0.5px; }
+.crit-desc { font-size:13px;color:var(--cinza);line-height:1.6; }
+
+/* ── RANKING ── */
+.ranking-section { background:var(--escuro);padding:96px 24px; }
+.ranking-section h2 { font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,46px);color:var(--branco);margin-bottom:14px;text-align:center; }
+.rank-sub { text-align:center;color:rgba(255,255,255,0.45);font-size:15px;max-width:460px;margin:0 auto 52px;line-height:1.7; }
+.rank-inner { max-width:860px;margin:0 auto; }
+.rank-filtros { display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px;justify-content:center; }
+.filtro-btn { padding:8px 20px;border:1px solid rgba(255,255,255,0.15);background:transparent;color:rgba(255,255,255,0.6);border-radius:20px;cursor:pointer;font-size:13px;font-family:'Inter',sans-serif;transition:all 0.2s; }
+.filtro-btn.ativo,.filtro-btn:hover { background:var(--dourado);color:var(--verde);border-color:var(--dourado);font-weight:600; }
+#rankingCards { display:flex;flex-direction:column;gap:12px; }
+.rank-loading { text-align:center;color:rgba(255,255,255,0.35);font-size:15px;padding:60px 0; }
+.rank-card { background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:24px 28px;display:grid;grid-template-columns:48px 1fr auto;gap:0 20px;align-items:center;transition:background 0.2s,border-color 0.2s; }
+.rank-card:hover { background:rgba(255,255,255,0.08);border-color:rgba(212,175,55,0.3); }
+.rank-pos { font-family:'Playfair Display',serif;font-size:28px;color:var(--dourado);font-weight:700;text-align:center;line-height:1; }
+.rank-pos.top1{color:#ffd700}.rank-pos.top2{color:#c0c0c0}.rank-pos.top3{color:#cd7f32}
+.rank-info { min-width:0; }
+.rank-nome { font-size:17px;font-weight:600;color:var(--branco);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.rank-local { font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:10px; }
+.rank-bar-bg { height:4px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden; }
+.rank-bar-fill { height:100%;border-radius:2px;background:linear-gradient(90deg,var(--verde2),var(--dourado));transition:width 1s ease; }
+.rank-score-area { text-align:right; }
+.rank-score { font-family:'Playfair Display',serif;font-size:32px;font-weight:700;line-height:1; }
+.rank-score.s5{color:#4caf50}.rank-score.s4{color:#8bc34a}.rank-score.s3{color:#ffc107}.rank-score.s2{color:#ff9800}.rank-score.s1{color:#f44336}
+.rank-score-max { font-size:12px;color:rgba(255,255,255,0.3); }
+.rank-data { font-size:11px;color:rgba(255,255,255,0.25);margin-top:4px;letter-spacing:0.5px; }
+.rank-vazio { text-align:center;padding:60px 0;color:rgba(255,255,255,0.3);font-size:15px; }
+
+/* ── AD SIDEBAR WRAP (ranking + ad lateral) ── */
+.rank-com-ad { max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start; }
+.ad-lateral { position:sticky;top:90px; }
+
+/* ── SOBRE ── */
+.sobre { background:var(--creme2);padding:96px 24px; }
+.sobre-inner { max-width:860px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center; }
+.sobre-logo { width:100%;max-width:300px;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.15);margin:0 auto;display:block; }
+.sobre .section-eyebrow { color:var(--dourado2); }
+.sobre h2 { font-family:'Playfair Display',serif;font-size:clamp(26px,4vw,40px);color:var(--verde);margin-bottom:18px;line-height:1.15; }
+.sobre p { color:var(--cinza);font-size:15px;line-height:1.8;margin-bottom:14px; }
+.sobre-redes { display:flex;gap:12px;margin-top:24px;flex-wrap:wrap; }
+.rede-btn { display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;transition:all 0.2s;border:2px solid transparent; }
+.rede-btn:hover { transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.15); }
+.rede-yt  { background:#ff0000;color:#fff; }
+.rede-ig  { background:linear-gradient(135deg,#e1306c,#833ab4);color:#fff; }
+.rede-tt  { background:#010101;color:#fff;border-color:#69c9d0; }
+.rede-btn svg { width:17px;height:17px;fill:currentColor; }
+
+/* ── CTA ── */
+.cta-section { background:var(--verde);padding:96px 24px;text-align:center;position:relative;overflow:hidden; }
+.cta-section::before { content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 50% 0%,rgba(212,175,55,0.12) 0%,transparent 70%); }
+.cta-section h2 { position:relative;z-index:1;font-family:'Playfair Display',serif;font-size:clamp(26px,5vw,50px);color:var(--branco);margin-bottom:18px;line-height:1.1; }
+.cta-section h2 em { color:var(--dourado);font-style:italic; }
+.cta-section p { position:relative;z-index:1;color:rgba(255,255,255,0.65);font-size:16px;max-width:460px;margin:0 auto 36px;line-height:1.7; }
+.cta-redes { position:relative;z-index:1;display:flex;gap:14px;justify-content:center;flex-wrap:wrap; }
+
+/* ── AD FOOTER ── */
+.ad-footer { background:var(--escuro);padding:32px 24px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.05); }
+
+/* ── FOOTER ── */
+footer { background:var(--escuro);padding:44px 24px;text-align:center;border-top:1px solid rgba(212,175,55,0.15); }
+.footer-logo-img { width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid var(--dourado);margin-bottom:12px; }
+.footer-name { font-family:'Playfair Display',serif;font-size:20px;color:var(--dourado); }
+.footer-name span { color:rgba(255,255,255,0.35);font-size:11px;display:block;font-family:'Inter',sans-serif;letter-spacing:2px;margin-top:3px;font-weight:300; }
+.footer-links { display:flex;gap:22px;justify-content:center;margin:22px 0;flex-wrap:wrap; }
+.footer-links a { color:rgba(255,255,255,0.35);text-decoration:none;font-size:12px;letter-spacing:1px;text-transform:uppercase;transition:color 0.2s; }
+.footer-links a:hover { color:var(--dourado); }
+.footer-copy { font-size:12px;color:rgba(255,255,255,0.18); }
+
+/* ── MODAL DETALHE ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 500;
+  background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
+  overflow-y: auto; padding: 24px 16px;
+}
+.modal-overlay.aberto { display: flex; align-items: flex-start; justify-content: center; }
+.modal-box {
+  background: #162b1d; border: 2px solid var(--dourado);
+  border-radius: 14px; width: 100%; max-width: 720px;
+  margin: auto; overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+  animation: slideUp 0.3s ease;
+}
+@keyframes slideUp { from{transform:translateY(30px);opacity:0} to{transform:translateY(0);opacity:1} }
+.modal-header {
+  background: var(--verde); padding: 28px 32px 24px;
+  display: flex; justify-content: space-between; align-items: flex-start;
+  border-bottom: 2px solid var(--dourado);
+}
+.modal-titulo { font-family:'Playfair Display',serif; font-size: 24px; color: var(--branco); margin-bottom: 4px; }
+.modal-local { font-size: 13px; color: rgba(255,255,255,0.55); }
+.modal-score-hero {
+  text-align: center; background: rgba(0,0,0,0.25);
+  border: 2px solid var(--dourado); border-radius: 10px;
+  padding: 12px 20px; min-width: 90px; flex-shrink: 0;
+}
+.modal-score-n { font-family:'Playfair Display',serif; font-size: 38px; font-weight: 700; line-height:1; }
+.modal-score-n.s5{color:#6fd97a} .modal-score-n.s4{color:#a8e063} .modal-score-n.s3{color:#ffd54f} .modal-score-n.s2{color:#ffb74d} .modal-score-n.s1{color:#ff6b6b}
+.modal-score-label { font-size: 10px; color: rgba(255,255,255,0.45); letter-spacing: 1px; margin-top: 2px; }
+.modal-fechar {
+  background: none; border: none; color: rgba(255,255,255,0.5);
+  font-size: 24px; cursor: pointer; padding: 0 0 0 16px;
+  line-height: 1; transition: color 0.2s; flex-shrink: 0;
+}
+.modal-fechar:hover { color: var(--dourado); }
+.modal-header-right { display: flex; align-items: center; gap: 14px; }
+.modal-body { padding: 28px 32px; }
+.modal-obs {
+  background: rgba(212,175,55,0.1); border-left: 3px solid var(--dourado);
+  border-radius: 0 6px 6px 0; padding: 12px 16px; margin-bottom: 24px;
+  color: rgba(255,255,255,0.75); font-size: 14px; line-height: 1.6;
+}
+.modal-obs strong { color: var(--dourado); display: block; font-size: 11px; letter-spacing: 1px; margin-bottom: 4px; }
+.modal-cat { margin-bottom: 22px; }
+.modal-cat-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 10px;
+}
+.modal-cat-nome {
+  font-size: 13px; font-weight: 700; color: var(--dourado);
+  letter-spacing: 0.5px; text-transform: uppercase;
+}
+.modal-cat-media {
+  font-family:'Playfair Display',serif; font-size: 18px; font-weight: 700;
+}
+.modal-cat-bar { height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; margin-bottom: 10px; overflow: hidden; }
+.modal-cat-bar-fill { height: 100%; border-radius: 2px; transition: width 0.8s ease; }
+.modal-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 12px; border-radius: 6px; margin-bottom: 4px;
+  background: rgba(255,255,255,0.03);
+}
+.modal-item:hover { background: rgba(255,255,255,0.07); }
+.modal-item-nome { font-size: 13px; color: rgba(255,255,255,0.6); }
+.modal-item-valor {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600;
+}
+.modal-item-label { color: var(--branco); }
+.modal-item-pts {
+  font-size: 11px; padding: 2px 8px; border-radius: 10px;
+  font-weight: 700; min-width: 36px; text-align: center;
+}
+.pts-5{background:#1b5e20;color:#a5d6a7}
+.pts-4{background:#33691e;color:#c5e1a5}
+.pts-3{background:#f57f17;color:#fff9c4}
+.pts-2{background:#e65100;color:#ffe0b2}
+.pts-1,.pts-0{background:#b71c1c;color:#ffcdd2}
+.modal-data { font-size: 12px; color: rgba(255,255,255,0.3); text-align: right; margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); }
+.modal-banheiro-extra {
+  background: rgba(255,255,255,0.04); border-radius: 8px; padding: 12px 16px;
+  margin-bottom: 14px; font-size: 12px; color: rgba(255,255,255,0.65); line-height: 1.6;
+}
+.modal-banheiro-extra strong { color: var(--dourado); }
+.modal-video-btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 16px; margin-bottom: 24px;
+  background: #ff0000; color: #fff;
+  border-radius: 8px; text-decoration: none;
+  font-size: 15px; font-weight: 700; letter-spacing: 0.3px;
+  transition: background 0.2s, transform 0.2s;
+}
+.modal-video-btn:hover { background: #cc0000; transform: translateY(-2px); }
+.modal-video-btn svg { width: 22px; height: 22px; fill: currentColor; flex-shrink: 0; }
+
+/* ── SELO DE CERTIFICAÇÃO ── */
+.selo-mini-wrap { display:flex; align-items:center; gap:8px; margin-top:8px; }
+.selo-mini { width:40px; height:40px; border-radius:50%; position:relative; flex-shrink:0; display:flex; align-items:center; justify-content:center; overflow:hidden; background-size:cover; background-position:center 15%; }
+.selo-mini-label { font-size:10px; font-weight:700; letter-spacing:0.5px; }
+
+.selo-mini.selo-excelencia { background-image:url('selo-ouro.png'); }
+.selo-mini.selo-qualidade  { background-image:url('selo-prata.png'); }
+.selo-mini.selo-certificacao { background-image:url('selo-bronze.png'); }
+
+.selo-label-excelencia { color:#f0d878; }
+.selo-label-qualidade  { color:#e8e8e8; }
+.selo-label-certificacao { color:#dba165; }
+
+/* Selo completo (modal) — imagem real do selo com QR posicionado sobre o espaço reservado */
+.selo-completo-wrap { display:flex; flex-direction:column; align-items:center; gap:14px; background:rgba(255,255,255,0.03); border-radius:12px; padding:28px 20px 22px; margin-bottom:24px; }
+.selo-completo-area { position:relative; width:340px; max-width:90vw; }
+.selo-completo-img { width:100%; display:block; filter:drop-shadow(0 6px 16px rgba(0,0,0,0.4)); }
+.selo-qr-overlay { position:absolute; background:#fff; padding:1px; box-sizing:border-box; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+.selo-qr-overlay img, .selo-qr-overlay canvas { display:block; max-width:100%; max-height:100%; }
+
+/* Posição do QR sobre cada imagem (validada visualmente sobre a arte real) */
+.selo-excelencia .selo-qr-overlay   { left:42.5%; top:79.0%; width:15.0%; height:12.0%; }
+.selo-qualidade  .selo-qr-overlay   { left:43.0%; top:77.0%; width:14.5%; height:14.0%; }
+.selo-certificacao .selo-qr-overlay { left:42.0%; top:80.5%; width:19.0%; height:13.0%; }
+
+.selo-info-texto { text-align:center; max-width:320px; }
+.selo-info-titulo { font-family:'Playfair Display',serif; font-size:16px; margin-bottom:4px; }
+.selo-info-titulo.t-excelencia { color:#d4af37; }
+.selo-info-titulo.t-qualidade { color:#c0c0c0; }
+.selo-info-titulo.t-certificacao { color:#b87333; }
+.selo-info-desc { font-size:12px; color:rgba(255,255,255,0.55); line-height:1.6; }
+.btn-download-selo {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  padding:12px 24px; border-radius:8px; border:none; cursor:pointer;
+  font-size:13px; font-weight:700; letter-spacing:0.3px;
+  background: var(--dourado); color: var(--verde); transition: all 0.2s;
+}
+.btn-download-selo:hover { background:#c4a027; transform:translateY(-2px); }
+.btn-download-selo:disabled { opacity:0.6; cursor:wait; transform:none; }
+
+/* Selo vencido */
+.selo-vencido-mini {
+  display:flex; align-items:center; gap:6px; margin-top:8px;
+  font-size:11px; color:#e0a85a; opacity:0.85;
+}
+.selo-vencido-mini::before { content:'⚠️'; font-size:11px; }
+.selo-vencido-wrap {
+  background:rgba(224,168,90,0.08); border:1px dashed rgba(224,168,90,0.4);
+  border-radius:10px; padding:18px 20px; margin-bottom:24px;
+  text-align:center;
+}
+.selo-vencido-titulo { font-size:14px; font-weight:700; color:#e0a85a; margin-bottom:4px; }
+.selo-vencido-desc { font-size:12px; color:rgba(255,255,255,0.5); line-height:1.5; }
+
+/* ── INDICADOR DE ACESSO (Fácil/Atenção/Difícil) ── */
+.acesso-mini-wrap { display:flex; align-items:center; gap:6px; margin-top:6px; font-size:11px; font-weight:700; letter-spacing:0.3px; }
+.acesso-mini-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+.acesso-mini-facil .acesso-mini-dot { background:#3fb86a; box-shadow:0 0 6px rgba(63,184,106,0.6); }
+.acesso-mini-facil { color:#7fd9a0; }
+.acesso-mini-atencao .acesso-mini-dot { background:#e0a528; box-shadow:0 0 6px rgba(224,165,40,0.6); }
+.acesso-mini-atencao { color:#f0c468; }
+.acesso-mini-dificil .acesso-mini-dot { background:#e2483f; box-shadow:0 0 6px rgba(226,72,63,0.6); }
+.acesso-mini-dificil { color:#f08c85; }
+
+.acesso-completo-wrap {
+  display:flex; align-items:center; gap:14px;
+  border-radius:10px; padding:16px 18px; margin-bottom:18px;
+}
+.acesso-completo-icone { font-size:28px; flex-shrink:0; }
+.acesso-completo-titulo { font-size:14px; font-weight:700; margin-bottom:3px; }
+.acesso-completo-desc { font-size:12px; line-height:1.5; opacity:0.85; }
+.acesso-completo-facil { background:rgba(63,184,106,0.1); border:1px solid rgba(63,184,106,0.4); }
+.acesso-completo-facil .acesso-completo-titulo { color:#7fd9a0; }
+.acesso-completo-facil .acesso-completo-desc { color:rgba(127,217,160,0.8); }
+.acesso-completo-atencao { background:rgba(224,165,40,0.1); border:1px solid rgba(224,165,40,0.4); }
+.acesso-completo-atencao .acesso-completo-titulo { color:#f0c468; }
+.acesso-completo-atencao .acesso-completo-desc { color:rgba(240,196,104,0.8); }
+.acesso-completo-dificil { background:rgba(226,72,63,0.1); border:1px solid rgba(226,72,63,0.4); }
+.acesso-completo-dificil .acesso-completo-titulo { color:#f08c85; }
+.acesso-completo-dificil .acesso-completo-desc { color:rgba(240,140,133,0.8); }
+
+/* ── RESPONSIVE ── */
+@media (max-width:900px) {
+  .rank-com-ad { grid-template-columns:1fr; }
+  .ad-lateral { display:none; }
+}
+@media (max-width:700px) {
+  nav { padding:10px 16px; }
+  .nav-links { display:none; }
+  .hero-stats { gap:22px; }
+  .hstat-n { font-size:32px; }
+  .sobre-inner { grid-template-columns:1fr;gap:32px; }
+  .sobre-logo { max-width:200px; }
+  .rank-card { grid-template-columns:36px 1fr auto;padding:16px; }
+  .rank-pos { font-size:20px; }
+  .rank-score { font-size:24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-left">
+    <img class="nav-logo-img" src="logo.png" alt="ExKombeiros">
+    <div class="nav-brand">ExKombeiros <span>GUIA DE CAMPING</span></div>
+  </div>
+  <div class="nav-links">
+    <a href="#como">Como Funciona</a>
+    <a href="#metodologia">Metodologia</a>
+    <a href="#ranking">Ranking</a>
+    <a href="#sobre">Sobre Nós</a>
+    <a href="https://youtube.com/@exkombeiros" target="_blank" class="nav-cta">▶ Canal</a>
+  </div>
+</nav>
+
+<!-- BANNER NOTIFICAÇÕES PUSH -->
+<div class="ad-banner topo" id="bannerNotificacao" style="display:none;">
+  <div class="promo-topo" style="background:#13301c;">
+    <div class="promo-topo-text">🔔 Quer ser avisado quando avaliarmos um <strong>novo camping</strong>?</div>
+    <div class="promo-topo-btns">
+      <button class="promo-topo-btn yt" style="background:var(--dourado);color:var(--verde);border:none;cursor:pointer;font-family:inherit;" onclick="ativarNotificacoes()">🔔 Ativar Notificações</button>
+      <button class="promo-topo-btn tt" style="cursor:pointer;font-family:inherit;border:none;" onclick="fecharBannerNotificacao()">Agora não</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROMO TOPO -->
+<div class="ad-banner topo">
+  <div class="promo-topo">
+    <div class="promo-topo-text">🏕️ Acompanhe nossas avaliações em tempo real — <strong>novos campings toda semana</strong></div>
+    <div class="promo-topo-btns">
+      <a href="https://youtube.com/@exkombeiros" target="_blank" class="promo-topo-btn yt">
+        <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:currentColor"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+        YouTube
+      </a>
+      <a href="https://www.instagram.com/exkombeiros" target="_blank" class="promo-topo-btn ig">
+        <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        Instagram
+      </a>
+      <a href="https://www.tiktok.com/@exkombeiros" target="_blank" class="promo-topo-btn tt">
+        <svg viewBox="0 0 24 24" style="width:13px;height:13px;fill:currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.28 6.28 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.16 8.16 0 004.77 1.52V6.77a4.85 4.85 0 01-1-.08z"/></svg>
+        TikTok
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-texture"></div>
+  <img class="hero-logo" src="logo.png" alt="Guia ExKombeiros de Camping">
+  <p class="hero-eyebrow">Avaliação Técnica Independente</p>
+  <h1>Guia <em>ExKombeiros</em></h1>
+  <p class="hero-sub">de Camping · Brasil</p>
+  <p class="hero-desc">
+    Avaliamos campings com critérios técnicos reais — energia elétrica, estrada de acesso, tipo de piso, água, banheiros e muito mais. Para quem viaja de trailer, motorhome ou van e precisa de informação confiável antes de partir.
+  </p>
+  <div class="hero-btns">
+    <a href="#ranking" class="btn-primary">🔍 Ver Ranking de Campings</a>
+    <a href="#como" class="btn-secondary">Como avaliamos</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-n" id="statCampings">—</div><div class="hstat-l">Campings Avaliados</div></div>
+    <div class="hstat"><div class="hstat-n" id="statEstados">—</div><div class="hstat-l">Estados Visitados</div></div>
+    <div class="hstat"><div class="hstat-n">9</div><div class="hstat-l">Critérios Técnicos</div></div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="como" id="como">
+  <p class="section-eyebrow">O Processo</p>
+  <h2>Como Avaliamos</h2>
+  <p class="como-sub">O Guia Exkombeiros avalia campings com base em critérios técnicos e físicos mensuráveis - energia elétrica, qualidade da água, tipo de piso, banheiros, conectividade e serviços. Esta avaliação não mede experiência subjetiva nem o acolhimento humano do local. Sabemos que muitos campings com estrutura mais simples oferecem experiências extraordinárias. Nossa missão é fornecer dados técnicos objetivos para viajantes que precisam dessas informações para planejar com segurança.</p>
+  <div class="passos">
+    <div class="passo"><span class="passo-icon">🚗</span><h3>Visitamos</h3><p>Chegamos com nosso trailer e vivenciamos o camping como qualquer viajante faria, da estrada de acesso até o último detalhe.</p></div>
+    <div class="passo"><span class="passo-icon">📋</span><h3>Avaliamos</h3><p>Aplicamos nosso protocolo com mais de 20 itens técnicos distribuídos em 9 categorias ponderadas por importância.</p></div>
+    <div class="passo"><span class="passo-icon">🔢</span><h3>Calculamos</h3><p>Cada categoria tem um peso no score final de 0 a 5. O resultado é objetivo, comparável e auditável.</p></div>
+    <div class="passo"><span class="passo-icon">📢</span><h3>Publicamos</h3><p>O ranking fica disponível aqui e produzimos conteúdo no YouTube, Instagram e TikTok para você acompanhar.</p></div>
+  </div>
+</section>
+
+<!-- PROMO MEIO -->
+<div class="ad-meio">
+  <div class="promo-meio">
+    <div class="promo-meio-eyebrow">Siga o canal</div>
+    <h3>Viajou de trailer? <em>A gente testou antes.</em></h3>
+    <p>Vídeos novos toda semana com avaliações técnicas, dicas de estrada e os bastidores da vida sobre rodas. Inscreva-se e não perca nenhuma avaliação.</p>
+    <div class="promo-meio-btns">
+      <a href="https://youtube.com/@exkombeiros" target="_blank" class="promo-meio-btn yt">
+        <svg viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+        ▶ Inscreva-se no YouTube
+      </a>
+      <a href="https://www.instagram.com/exkombeiros" target="_blank" class="promo-meio-btn ig">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        Instagram
+      </a>
+      <a href="https://www.tiktok.com/@exkombeiros" target="_blank" class="promo-meio-btn tt">
+        <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.28 6.28 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.16 8.16 0 004.77 1.52V6.77a4.85 4.85 0 01-1-.08z"/></svg>
+        TikTok
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- METODOLOGIA -->
+<section class="metodologia" id="metodologia">
+  <div class="met-inner">
+    <p class="section-eyebrow" style="text-align:center;color:var(--dourado2)">Os Critérios</p>
+    <h2>Metodologia de Avaliação</h2>
+    <p class="met-sub">Cada critério foi escolhido por impactar diretamente a experiência de quem viaja com trailer ou motorhome.</p>
+    <div class="criterios">
+      <div class="criterio"><div class="crit-topo"><span class="crit-icon">⚡</span><span class="crit-nome">Energia Elétrica</span></div><span class="crit-peso">Peso 18%</span><p class="crit-desc">Tensão medida em Volts (classificada de Excelente a Ruim), estabilidade observada, estado visual da instalação, proteção por disjuntor, amperagem por ponto, tipo de tomada (padrão NBR) e quantidade de tomadas por parcela.</p></div>
+      <div class="criterio"><div class="crit-topo"><span class="crit-icon">🚿</span><span class="crit-nome">Banheiros</span></div><span class="crit-peso">Peso 18%</span><p class="crit-desc">Proporção por parcela, chuveiro quente e limpeza. Avaliamos quantidade de sanitários e chuveiros separados por gênero (masculino/feminino); banheiro unissex recebe desconto de pontos.</p></div>
+      <div class="criterio"><div class="crit-topo"><span class="crit-icon">🛣️</span><span class="crit-nome">Acesso e Terreno</span></div><span class="crit-peso">Peso 30%</span><p class="crit-desc">O critério mais decisivo do guia: largura da via, tração e aderência do solo, entrada para trailer/motorhome, piso, nível do terreno, espaço para manobra e sombra. Inclui também o indicador de Acesso (Fácil, Atenção ou Difícil), pois um camping excelente não compensa um acesso impraticável.</p></div>
+      <div class="criterio"><div class="crit-topo"><span class="crit-icon">💧</span><span class="crit-nome">Água</span></div><span class="crit-peso">Peso 7%</span><p class="crit-desc">Qualidade e potabilidade (rede tratada e nascente recebem nota máxima), pressão, pontos de abastecimento nas parcelas e ponto de reabastecimento exclusivo para trailer/motorhome.</p></div>
+      <div class="criterio"><div class="crit-topo"><span class="crit-icon">📶</span><span class="crit-nome">Conectividade</span></div><span class="crit-peso">Peso 7%</span><p class="crit-desc">Cobertura de celular por operadora e qualidade do Wi-Fi do camping.</p></div>
+      <div class="criterio"><div class="crit-topo"><span class="crit-icon">🏗️</span><span class="crit-nome">Infraestrutura</span></div><span class="crit-peso">Peso 7%</span><p class="crit-desc">Descarte de lixo, ponto de esgoto para trailer e segurança do camping.</p></div>
+      <div class="criterio"><div class="crit-topo"><span class="crit-icon">🍳</span><span class="crit-nome">Cozinha Compartilhada</span></div><span class="crit-peso">Peso 5%</span><p class="crit-desc">Presença e qualidade da cozinha coletiva. Peso reduzido pois trailer e motorhome já têm cozinha própria.</p></div>
+      <div class="criterio"><div class="crit-topo"><span class="crit-icon">🛒</span><span class="crit-nome">Conveniência</span></div><span class="crit-peso">Peso 5%</span><p class="crit-desc">Proximidade de mercado, loja de conveniência e restaurante.</p></div>
+      <div class="criterio"><div class="crit-topo"><span class="crit-icon">🐾</span><span class="crit-nome">Pet Friendly</span></div><span class="crit-peso">Peso 3%</span><p class="crit-desc">Se o camping aceita animais de estimação, com ou sem restrições. Peso reduzido por ser um diferencial, não um critério estrutural.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- RANKING com AD LATERAL -->
+<section class="ranking-section" id="ranking">
+  <p class="section-eyebrow" style="text-align:center">Os Melhores</p>
+  <h2>Ranking de Campings</h2>
+  <p class="rank-sub">Ordenado pelo score técnico. Atualizamos sempre que visitamos um novo camping.</p>
+
+  <div class="rank-com-ad">
+    <!-- CARDS DO RANKING -->
+    <div>
+      <div class="rank-filtros" id="filtrosEstado">
+        <button class="filtro-btn ativo" onclick="filtrarEstado(this,'todos')">Todos os estados</button>
+      </div>
+      <div id="rankingCards">
+        <div class="rank-loading">🔍 Carregando campings avaliados...</div>
+      </div>
+    </div>
+
+    <!-- PROMO LATERAL -->
+    <div class="ad-lateral">
+      <div class="promo-lateral">
+        <img class="promo-lateral-logo" src="logo.png" alt="ExKombeiros">
+        <h4>Guia ExKombeiros</h4>
+        <div class="promo-lateral-stats">
+          <div class="promo-lateral-stat">
+            <strong id="statLateralCampings">—</strong>
+            <span>CAMPINGS</span>
+          </div>
+          <div class="promo-lateral-stat">
+            <strong id="statLateralEstados">—</strong>
+            <span>ESTADOS</span>
+          </div>
+        </div>
+        <p>Avaliações técnicas independentes para quem viaja de trailer, motorhome ou van.</p>
+        <hr class="promo-lateral-divider">
+        <div class="promo-lateral-redes">
+          <a href="https://youtube.com/@exkombeiros" target="_blank" class="promo-lateral-btn yt">
+            <svg viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+            ▶ YouTube
+          </a>
+          <a href="https://www.instagram.com/exkombeiros" target="_blank" class="promo-lateral-btn ig">
+            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            Instagram
+          </a>
+          <a href="https://www.tiktok.com/@exkombeiros" target="_blank" class="promo-lateral-btn tt">
+            <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.28 6.28 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.16 8.16 0 004.77 1.52V6.77a4.85 4.85 0 01-1-.08z"/></svg>
+            TikTok
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOBRE -->
+<section class="sobre" id="sobre">
+  <div class="sobre-inner">
+    <img class="sobre-logo" src="logo.png" alt="Guia ExKombeiros">
+    <div>
+      <p class="section-eyebrow">Quem Somos</p>
+      <h2>Rogério &amp; Viviane</h2>
+      <p>Somos viajantes apaixonados pela estrada. Depois de muitas decepções com campings que não entregavam o que prometiam, decidimos criar o <strong>Guia ExKombeiros</strong> — uma avaliação técnica, honesta e independente, feita por quem realmente vive essa vida.</p>
+      <p>Nosso guia não é patrocinado por campings. O que você vê aqui é o resultado real das nossas visitas, testado com nosso próprio equipamento.</p>
+      <div class="sobre-redes">
+        <a href="https://youtube.com/@exkombeiros" target="_blank" class="rede-btn rede-yt">
+          <svg viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+          YouTube
+        </a>
+        <a href="https://www.instagram.com/exkombeiros" target="_blank" class="rede-btn rede-ig">
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          Instagram
+        </a>
+        <a href="https://www.tiktok.com/@exkombeiros" target="_blank" class="rede-btn rede-tt">
+          <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.28 6.28 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.16 8.16 0 004.77 1.52V6.77a4.85 4.85 0 01-1-.08z"/></svg>
+          TikTok
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Vai viajar em breve?<br><em>Consulte o Guia Antes</em></h2>
+  <p>Acompanhe nosso canal e fique por dentro das avaliações mais recentes. Novos campings todo mês.</p>
+  <div class="cta-redes">
+    <a href="https://youtube.com/@exkombeiros" target="_blank" class="rede-btn rede-yt">
+      <svg viewBox="0 0 24 24" style="width:17px;height:17px;fill:currentColor"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+      Seguir no YouTube
+    </a>
+    <a href="https://www.instagram.com/exkombeiros" target="_blank" class="rede-btn rede-ig">
+      <svg viewBox="0 0 24 24" style="width:17px;height:17px;fill:currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      Instagram
+    </a>
+    <a href="https://www.tiktok.com/@exkombeiros" target="_blank" class="rede-btn rede-tt">
+      <svg viewBox="0 0 24 24" style="width:17px;height:17px;fill:currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.28 6.28 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.16 8.16 0 004.77 1.52V6.77a4.85 4.85 0 01-1-.08z"/></svg>
+      TikTok
+    </a>
+  </div>
+</section>
+
+<!-- PROMO PRÉ-FOOTER -->
+<div class="ad-footer">
+  <div class="promo-prefooter">
+    <div class="promo-prefooter-text">
+      <strong>📱 Siga o Guia ExKombeiros</strong>
+      Conteúdo novo toda semana — avaliações, dicas e a vida na estrada
+    </div>
+    <div class="promo-prefooter-btns">
+      <a href="https://youtube.com/@exkombeiros" target="_blank" class="promo-prefooter-btn yt">▶ YouTube</a>
+      <a href="https://www.instagram.com/exkombeiros" target="_blank" class="promo-prefooter-btn ig">📸 Instagram</a>
+      <a href="https://www.tiktok.com/@exkombeiros" target="_blank" class="promo-prefooter-btn tt">♪ TikTok</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <img class="footer-logo-img" src="logo.png" alt="ExKombeiros">
+  <div class="footer-name">ExKombeiros <span>GUIA TÉCNICO DE CAMPING · BRASIL</span></div>
+  <div class="footer-links">
+    <a href="#como">Como Funciona</a>
+    <a href="#metodologia">Metodologia</a>
+    <a href="#ranking">Ranking</a>
+    <a href="#sobre">Sobre Nós</a>
+    <a href="mailto:guiaexkombeiros@gmail.com">guiaexkombeiros@gmail.com</a>
+    <a href="privacidade.html">Política de Privacidade</a>
+  </div>
+  <p class="footer-copy">© 2025 Guia ExKombeiros de Camping. Avaliação técnica independente.</p>
+</footer>
+
+<!-- MODAL DETALHE DO CAMPING -->
+<div class="modal-overlay" id="modalOverlay" onclick="fecharModalSe(event)">
+  <div class="modal-box" id="modalBox">
+    <div class="modal-header">
+      <div>
+        <div class="modal-titulo" id="modalTitulo">—</div>
+        <div class="modal-local" id="modalLocal">—</div>
+      </div>
+      <div class="modal-header-right">
+        <div class="modal-score-hero">
+          <div class="modal-score-n" id="modalScoreN">—</div>
+          <div class="modal-score-label">SCORE / 5.0</div>
+        </div>
+        <button class="modal-fechar" onclick="fecharModal()">✕</button>
+      </div>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+var firebaseConfig = {
+  apiKey: "AIzaSyCFeqtsuT-4Q4e8EyrsEPRcIo3I6AmfEzE",
+  authDomain: "exkombeiros-24a9a.firebaseapp.com",
+  databaseURL: "https://exkombeiros-24a9a-default-rtdb.firebaseio.com",
+  projectId: "exkombeiros-24a9a",
+  storageBucket: "exkombeiros-24a9a.firebasestorage.app",
+  messagingSenderId: "507759690855",
+  appId: "1:507759690855:web:8a6ec18c9a98d7ee9900c2"
+};
+var todosOsCampings = [];
+var estadoAtivo = 'todos';
+
+try {
+  firebase.initializeApp(firebaseConfig);
+  var db = firebase.database();
+  db.ref('ranking').on('value', function(snap) {
+    var dados = snap.val() || {};
+    todosOsCampings = [];
+    var keys = Object.keys(dados);
+    for (var i = 0; i < keys.length; i++) {
+      var obj = dados[keys[i]]; obj._key = keys[i];
+      if (obj.status === 'rascunho') continue; // não exibir rascunhos no site público
+      todosOsCampings.push(obj);
+    }
+    todosOsCampings.sort(function(a,b){ return parseFloat(b.score)-parseFloat(a.score); });
+    atualizarStats();
+    popularFiltros();
+    renderRanking(estadoAtivo);
+  });
+} catch(e) {
+  document.getElementById('rankingCards').innerHTML = '<div class="rank-vazio">⚠️ Não foi possível carregar os dados. Tente em instantes.</div>';
+}
+
+// ── NOTIFICAÇÕES PUSH ─────────────────────────────────────────────────────
+var VAPID_KEY = 'BMLbHiRCsmkZtgnv83ndAteFpUhmJMu5hiM91J45K8f0PhM2ORcVsVrBgj-l3hLZrfEDDf2pfu7Xl64kMQyQe4E';
+
+function mostrarBannerNotificacaoSeAplicavel() {
+  try {
+    if (!('Notification' in window) || !('serviceWorker' in navigator)) return; // navegador não suporta
+    var jaDecidiu = localStorage.getItem('exk_notif_decisao');
+    if (jaDecidiu) return; // pessoa já ativou ou já dispensou antes
+    if (Notification.permission === 'granted' || Notification.permission === 'denied') return;
+    var banner = document.getElementById('bannerNotificacao');
+    if (banner) banner.style.display = 'block';
+  } catch (e) { console.warn('Notificações: não foi possível avaliar exibição do banner', e); }
+}
+
+function fecharBannerNotificacao() {
+  var banner = document.getElementById('bannerNotificacao');
+  if (banner) banner.style.display = 'none';
+  try { localStorage.setItem('exk_notif_decisao', 'dispensado'); } catch (e) {}
+}
+
+function ativarNotificacoes() {
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+    alert('Seu navegador não suporta notificações push.');
+    return;
+  }
+  Notification.requestPermission().then(function (permissao) {
+    if (permissao !== 'granted') {
+      try { localStorage.setItem('exk_notif_decisao', 'negado'); } catch (e) {}
+      fecharBannerNotificacao();
+      return;
+    }
+    try {
+      var messaging = firebase.messaging();
+      navigator.serviceWorker.register('service-worker.js').then(function (registroSW) {
+        messaging.getToken({ vapidKey: VAPID_KEY, serviceWorkerRegistration: registroSW })
+          .then(function (token) {
+            if (!token) { console.warn('Não foi possível gerar o token de notificação.'); return; }
+            db.ref('tokensNotificacao/' + token).set({
+              criadoEm: Date.now(),
+              userAgent: navigator.userAgent
+            }).then(function () {
+              try { localStorage.setItem('exk_notif_decisao', 'ativado'); } catch (e) {}
+              fecharBannerNotificacao();
+              alert('Notificações ativadas! Você será avisado sobre novos campings avaliados.');
+            }).catch(function (erroSalvar) {
+              console.error('Erro ao salvar token:', erroSalvar);
+            });
+          })
+          .catch(function (erroToken) {
+            console.error('Erro ao gerar token de notificação:', erroToken);
+          });
+      });
+    } catch (erroMessaging) {
+      console.error('Erro ao inicializar Firebase Messaging:', erroMessaging);
+    }
+  });
+}
+
+// Mostra o banner um pouco depois do carregamento, sem ser intrusivo de imediato
+setTimeout(mostrarBannerNotificacaoSeAplicavel, 4000);
+
+function atualizarStats() {
+  var estados = {};
+  for (var i=0;i<todosOsCampings.length;i++) { if(todosOsCampings[i].estado) estados[todosOsCampings[i].estado]=1; }
+  var total = todosOsCampings.length;
+  var totalEstados = Object.keys(estados).length;
+  document.getElementById('statCampings').textContent = total;
+  document.getElementById('statEstados').textContent = totalEstados;
+  var sl = document.getElementById('statLateralCampings');
+  var se = document.getElementById('statLateralEstados');
+  if(sl) sl.textContent = total;
+  if(se) se.textContent = totalEstados;
+}
+
+function popularFiltros() {
+  var estados = {};
+  for (var i=0;i<todosOsCampings.length;i++) { if(todosOsCampings[i].estado) estados[todosOsCampings[i].estado]=1; }
+  var container = document.getElementById('filtrosEstado');
+  container.innerHTML = '<button class="filtro-btn ativo" onclick="filtrarEstado(this,\'todos\')">Todos os estados</button>';
+  var ests = Object.keys(estados).sort();
+  for (var i=0;i<ests.length;i++) {
+    var btn = document.createElement('button');
+    btn.className='filtro-btn'; btn.textContent=ests[i];
+    btn.setAttribute('onclick',"filtrarEstado(this,'"+ests[i]+"')");
+    container.appendChild(btn);
+  }
+}
+
+function filtrarEstado(btn, estado) {
+  estadoAtivo = estado;
+  var btns = document.querySelectorAll('.filtro-btn');
+  for(var i=0;i<btns.length;i++) btns[i].classList.remove('ativo');
+  btn.classList.add('ativo');
+  renderRanking(estado);
+}
+
+function scoreClass(s) {
+  if(s>=4.5) return 's5'; if(s>=3.5) return 's4'; if(s>=2.5) return 's3'; if(s>=1.5) return 's2'; return 's1';
+}
+
+// ── SELO DE CERTIFICAÇÃO ─────────────────────────────────────────────────
+// ── Tensão Medida (leitura do Firebase para exibição pública) ───────────
+function calcularFaixaTensao220pub(v) {
+  if (!v && v !== 0) return null;
+  if (v >= 210 && v <= 230) return { label:'Excelente', pontos:5 };
+  if ((v >= 200 && v < 210)||(v > 230 && v <= 240)) return { label:'Boa', pontos:4 };
+  if ((v >= 190 && v < 200)||(v > 240 && v <= 250)) return { label:'Regular', pontos:2 };
+  return { label:'Ruim', pontos:0 };
+}
+function calcularFaixaTensao127pub(v) {
+  if (!v && v !== 0) return null;
+  if (v >= 121 && v <= 133) return { label:'Excelente', pontos:5 };
+  if ((v >= 115 && v < 121)||(v > 133 && v <= 139)) return { label:'Boa', pontos:4 };
+  if ((v >= 110 && v < 115)||(v > 139 && v <= 145)) return { label:'Regular', pontos:2 };
+  return { label:'Ruim', pontos:0 };
+}
+function calcularTensaoPub(tensaoInfo) {
+  if (!tensaoInfo || tensaoInfo.prejudicada) return null;
+  var f220 = tensaoInfo.rede !== '127' ? calcularFaixaTensao220pub(tensaoInfo.v220) : null;
+  var f127 = tensaoInfo.rede !== '220' ? calcularFaixaTensao127pub(tensaoInfo.v127) : null;
+  if (!f220 && !f127) return null;
+  if (tensaoInfo.rede === '220') return f220 ? { pontos:f220.pontos, descricao:'220V: '+f220.label+' ('+tensaoInfo.v220+'V)' } : null;
+  if (tensaoInfo.rede === '127') return f127 ? { pontos:f127.pontos, descricao:'127V: '+f127.label+' ('+tensaoInfo.v127+'V)' } : null;
+  // Ambas
+  if (f220 && f127) {
+    var media = (f220.pontos + f127.pontos) / 2;
+    return { pontos:media, descricao:'220V: '+f220.label+' ('+tensaoInfo.v220+'V) • 127V: '+f127.label+' ('+tensaoInfo.v127+'V) • Média: '+media.toFixed(1)+'/5' };
+  }
+  if (f220) return { pontos:f220.pontos, descricao:'220V: '+f220.label+' ('+tensaoInfo.v220+'V)' };
+  return { pontos:f127.pontos, descricao:'127V: '+f127.label+' ('+tensaoInfo.v127+'V)' };
+}
+
+function getSeloInfo(score) {
+  if (score > 4.5) {
+    return {
+      classe: 'selo-excelencia',
+      imagem: 'selo-ouro.png',
+      titulo: 'Excelência',
+      desc: 'O grau máximo do Guia ExKombeiros. Conformidade técnica total: o camping não possui pontos críticos e atende a todos os critérios de infraestrutura e acesso.'
+    };
+  }
+  if (score > 4.0) {
+    return {
+      classe: 'selo-qualidade',
+      imagem: 'selo-prata.png',
+      titulo: 'Qualidade Confirmada',
+      desc: 'Grau intermediário de excelência. Infraestrutura confiável: o camping é totalmente apto para a operação segura de motorhomes e trailers, cumprindo os requisitos essenciais.'
+    };
+  }
+  if (score > 3.5) {
+    return {
+      classe: 'selo-certificacao',
+      imagem: 'selo-bronze.png',
+      titulo: 'Parada Técnica',
+      desc: 'Grau de entrada da certificação. Local seguro e autêntico, com o básico técnico (acesso e manobra) validado e aprovado — ideal para quem busca uma experiência mais rústica.'
+    };
+  }
+  return null;
+}
+
+// ── Validade do selo (1 ano a partir da data de visita) ─────────────────
+function parseDataBR(dataStr) {
+  // dataStr no formato DD/MM/YYYY
+  if (!dataStr) return null;
+  var p = dataStr.split('/');
+  if (p.length !== 3) return null;
+  return new Date(parseInt(p[2]), parseInt(p[1]) - 1, parseInt(p[0]));
+}
+
+function seloEstaVencido(dataVisitaStr) {
+  var dataVisita = parseDataBR(dataVisitaStr);
+  if (!dataVisita) return false; // sem data, não invalida
+  var limite = new Date(dataVisita);
+  limite.setFullYear(limite.getFullYear() + 1);
+  return new Date() > limite;
+}
+
+// ── INDICADOR DE ACESSO (Fácil/Atenção/Difícil) ──────────────────────────
+function getAcessoInfo(nivel) {
+  if (nivel === 'facil') {
+    return { classe:'facil', icone:'🟢', titulo:'Acesso Fácil', desc:'Qualquer trailer ou motorhome entra sem dificuldade.' };
+  }
+  if (nivel === 'atencao') {
+    return { classe:'atencao', icone:'🟡', titulo:'Acesso com Atenção', desc:'Chega bem, mas exige cuidado — manobra, trecho de terra ou via estreita.' };
+  }
+  if (nivel === 'dificil') {
+    return { classe:'dificil', icone:'🔴', titulo:'Acesso Difícil', desc:'Não recomendado para trailers ou motorhomes grandes.' };
+  }
+  return null;
+}
+
+function renderAcessoMini(nivel) {
+  var info = getAcessoInfo(nivel);
+  if (!info) return '';
+  return '<div class="acesso-mini-wrap acesso-mini-'+info.classe+'">'+
+    '<span class="acesso-mini-dot"></span><span>'+info.titulo+'</span>'+
+  '</div>';
+}
+
+function renderAcessoCompleto(nivel) {
+  var info = getAcessoInfo(nivel);
+  if (!info) return '';
+  return '<div class="acesso-completo-wrap acesso-completo-'+info.classe+'">'+
+    '<div class="acesso-completo-icone">'+info.icone+'</div>'+
+    '<div>'+
+      '<div class="acesso-completo-titulo">'+info.titulo+'</div>'+
+      '<div class="acesso-completo-desc">'+info.desc+'</div>'+
+    '</div>'+
+  '</div>';
+}
+
+function renderSeloMini(score, dataVisita) {
+  var info = getSeloInfo(score);
+  if (!info) return '';
+  if (seloEstaVencido(dataVisita)) {
+    return '<div class="selo-vencido-mini">Selo vencido — reavaliação pendente</div>';
+  }
+  return '<div class="selo-mini-wrap" title="Selo '+info.titulo+'">'+
+    '<div class="selo-mini '+info.classe+'"></div>'+
+    '<span class="selo-mini-label selo-label-'+info.classe.replace('selo-','')+'">Selo '+info.titulo+'</span>'+
+  '</div>';
+}
+
+function renderSeloCompleto(score, campingKey, dataVisita) {
+  var info = getSeloInfo(score);
+  if (!info) return '';
+
+  if (seloEstaVencido(dataVisita)) {
+    return '<div class="selo-vencido-wrap">'+
+      '<div class="selo-vencido-titulo">⚠️ Selo vencido — reavaliação pendente</div>'+
+      '<div class="selo-vencido-desc">Este camping já recebeu o Selo '+info.titulo+', mas a validade de 1 ano a partir da visita técnica expirou. Uma nova avaliação é necessária para renovar a certificação.</div>'+
+    '</div>';
+  }
+
+  var qrId = 'qr_' + campingKey;
+
+  return '<div class="selo-completo-wrap">'+
+    '<div class="selo-completo-area '+info.classe+'" id="seloVisual_'+campingKey+'">'+
+      '<img class="selo-completo-img" src="'+info.imagem+'" alt="Selo '+info.titulo+'" crossorigin="anonymous">'+
+      '<div class="selo-qr-overlay" id="'+qrId+'"></div>'+
+    '</div>'+
+    '<div class="selo-info-texto">'+
+      '<div class="selo-info-titulo t-'+info.classe.replace('selo-','')+'">Selo '+info.titulo+'</div>'+
+      '<div class="selo-info-desc">'+info.desc+'</div>'+
+      '<div class="selo-info-desc" style="margin-top:6px;opacity:0.6;">Válido por 1 ano a partir da data da visita técnica.</div>'+
+    '</div>'+
+    '<button class="btn-download-selo" id="btnDownload_'+campingKey+'" onclick="baixarSelo(\''+campingKey+'\')">⬇ Baixar Selo em Alta Resolução</button>'+
+  '</div>';
+}
+
+function gerarQrDoSelo(campingKey) {
+  var qrEl = document.getElementById('qr_' + campingKey);
+  if (!qrEl || typeof QRCode === 'undefined') return;
+
+  // O container pode ainda não ter dimensões no primeiro frame (imagem ainda carregando) — tenta algumas vezes
+  var tentativas = 0;
+  function tentarGerar() {
+    tentativas++;
+    var tamanho = Math.min(qrEl.clientWidth, qrEl.clientHeight);
+    if (tamanho < 20 && tentativas < 15) {
+      setTimeout(tentarGerar, 150);
+      return;
+    }
+    if (tamanho < 20) tamanho = 60; // fallback se mesmo assim não mediu nada
+    qrEl.innerHTML = '';
+    var url = window.location.origin + window.location.pathname + '#camping=' + campingKey;
+    new QRCode(qrEl, { text: url, width: tamanho, height: tamanho, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+  }
+  tentarGerar();
+}
+
+function baixarSelo(campingKey) {
+  var node = document.getElementById('seloVisual_' + campingKey);
+  var btn = document.getElementById('btnDownload_' + campingKey);
+  if (!node) return;
+  if (typeof html2canvas === 'undefined') {
+    alert('Biblioteca de exportação não carregou. Verifique sua conexão e tente novamente.');
+    return;
+  }
+  var textoOriginal = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Gerando imagem em alta resolução...'; }
+
+  // Escala alta para ficar em torno de ~3000px e servir como base para impressão de adesivo
+  html2canvas(node, {
+    backgroundColor: null,
+    scale: 12.5,
+    useCORS: true
+  }).then(function(canvas) {
+    var link = document.createElement('a');
+    link.download = 'selo-exkombeiros-' + campingKey + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    if (btn) { btn.disabled = false; btn.textContent = textoOriginal; }
+  }).catch(function(err) {
+    console.error('Erro ao gerar selo:', err);
+    alert('Não foi possível gerar a imagem do selo. Tente novamente.');
+    if (btn) { btn.disabled = false; btn.textContent = textoOriginal; }
+  });
+}
+
+function ptsClass(p) {
+  if(p>=5) return 'pts-5'; if(p>=4) return 'pts-4'; if(p>=3) return 'pts-3'; if(p>=2) return 'pts-2'; if(p>=1) return 'pts-1'; return 'pts-0';
+}
+
+function corBarra(media) {
+  if(media>=4) return '#4caf50'; if(media>=2.5) return '#ffc107'; return '#f44336';
+}
+
+function renderRanking(estado) {
+  var lista = estado==='todos' ? todosOsCampings : todosOsCampings.filter(function(c){return c.estado===estado;});
+  var container = document.getElementById('rankingCards');
+  if(lista.length===0){ container.innerHTML='<div class="rank-vazio">Nenhum camping avaliado neste estado ainda. Em breve!</div>'; return; }
+  var html='';
+  for(var i=0;i<lista.length;i++){
+    var c=lista[i], pos=i+1, sc=parseFloat(c.score)||0;
+    var pct=(sc/5*100).toFixed(0);
+    var loc=(c.cidade||'')+(c.cidade&&c.estado?' / ':'' )+(c.estado||'');
+    var posC = pos===1?'top1':pos===2?'top2':pos===3?'top3':'';
+    html+='<div class="rank-card" onclick="abrirModal(\''+c._key+'\')" style="cursor:pointer;" title="Ver detalhes">'+
+      '<div class="rank-pos '+posC+'">'+pos+'</div>'+
+      '<div class="rank-info">'+
+        '<div class="rank-nome">'+(c.nomeSimples||c.nome||'Camping')+'</div>'+
+        '<div class="rank-local">📍 '+(loc||'—')+'</div>'+
+        '<div class="rank-bar-bg"><div class="rank-bar-fill" style="width:'+pct+'%"></div></div>'+
+        renderSeloMini(sc, c.data)+
+        renderAcessoMini(c.nivelAcesso)+
+      '</div>'+
+      '<div class="rank-score-area">'+
+        '<div class="rank-score '+scoreClass(sc)+'">'+sc.toFixed(1)+'</div>'+
+        '<div class="rank-score-max">/ 5.0</div>'+
+        '<div class="rank-data">Ver detalhes →</div>'+
+      '</div>'+
+    '</div>';
+  }
+  container.innerHTML=html;
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────────────
+function abrirModal(key) {
+  var c = null;
+  for(var i=0;i<todosOsCampings.length;i++){ if(todosOsCampings[i]._key===key){ c=todosOsCampings[i]; break; } }
+  if(!c) return;
+
+  var sc = parseFloat(c.score)||0;
+  var loc = (c.cidade||'')+(c.cidade&&c.estado?' / ':'' )+(c.estado||'');
+
+  // Header
+  document.getElementById('modalTitulo').textContent = c.nomeSimples || c.nome || 'Camping';
+  document.getElementById('modalLocal').textContent = '📍 '+(loc||'—')+'  ·  Visita: '+(c.data||'—');
+  var scoreEl = document.getElementById('modalScoreN');
+  scoreEl.textContent = sc.toFixed(1);
+  scoreEl.className = 'modal-score-n ' + scoreClass(sc);
+
+  // Body
+  var html = '';
+
+  // Selo de Acesso (Fácil/Atenção/Difícil)
+  html += renderAcessoCompleto(c.nivelAcesso);
+
+  // Tensão Medida (se disponível)
+  if (c.tensaoInfo) {
+    var tensaoPub = calcularTensaoPub(c.tensaoInfo);
+    if (tensaoPub) {
+      var corTensao = tensaoPub.pontos >= 4.5 ? '#2e7d32' : tensaoPub.pontos >= 3 ? '#558b2f' : tensaoPub.pontos >= 1.5 ? '#f57f17' : '#c62828';
+      html += '<div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:14px 16px;margin-bottom:16px;">' +
+        '<div style="font-size:11px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,0.5);margin-bottom:6px;">⚡ TENSÃO MEDIDA</div>' +
+        '<div style="font-size:14px;color:'+corTensao+';font-weight:600;">'+tensaoPub.descricao+'</div>' +
+      '</div>';
+    } else if (c.tensaoInfo.prejudicada) {
+      html += '<div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:14px 16px;margin-bottom:16px;">' +
+        '<div style="font-size:11px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,0.5);margin-bottom:6px;">⚡ TENSÃO MEDIDA</div>' +
+        '<div style="font-size:13px;color:rgba(255,255,255,0.45);">⚠️ Energia indisponível no momento da visita — não contabilizada na nota.</div>' +
+      '</div>';
+    }
+  }
+
+  // Selo de certificação (se aplicável)
+  html += renderSeloCompleto(sc, key, c.data);
+
+  // Botão do vídeo
+  if(c.videoUrl) {
+    html += '<a href="'+c.videoUrl+'" target="_blank" class="modal-video-btn">'+
+      '<svg viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>'+
+      '▶ Assistir avaliação completa no YouTube'+
+    '</a>';
+  }
+
+  // Observações
+  if(c.observacoes) {
+    html += '<div class="modal-obs"><strong>📝 OBSERVAÇÕES</strong>'+c.observacoes+'</div>';
+  }
+
+  // Categorias com detalhes
+  var det = c.detalhes;
+  if(det && det.length) {
+    for(var ci=0; ci<det.length; ci++) {
+      var cat = det[ci];
+      if(!cat || !cat.itens) continue;
+      var soma=0, count=0;
+      for(var ii=0;ii<cat.itens.length;ii++){
+        var item=cat.itens[ii];
+        if(item && item.opcoes && item.opcoes[item.selecionado]){
+          soma += item.opcoes[item.selecionado].pontos; count++;
+        }
+      }
+      var media = count>0 ? soma/count : 0;
+
+      // Desconto de unissex na categoria Banheiros
+      if (cat.nome === 'Banheiros' && c.dadosBanheiros && c.dadosBanheiros.unissex) {
+        media = Math.max(0, media - 1);
+      }
+
+      var pct = (media/5*100).toFixed(0);
+      var cor = corBarra(media);
+
+      html += '<div class="modal-cat">';
+      html += '<div class="modal-cat-header">';
+      html += '<div class="modal-cat-nome">'+cat.nome+' <span style="color:rgba(255,255,255,0.3);font-size:11px;font-weight:400">(peso '+cat.peso+'%)</span></div>';
+      html += '<div class="modal-cat-media" style="color:'+cor+'">'+media.toFixed(1)+' / 5</div>';
+      html += '</div>';
+      html += '<div class="modal-cat-bar"><div class="modal-cat-bar-fill" style="width:'+pct+'%;background:'+cor+'"></div></div>';
+
+      // Detalhamento extra de Banheiros (sanitários/chuveiros M/F + unissex)
+      if (cat.nome === 'Banheiros' && c.dadosBanheiros) {
+        var db = c.dadosBanheiros;
+        html += '<div class="modal-banheiro-extra">';
+        html += '<strong>🚹 Masculino:</strong> ' + (db.masc_sanitarios||0) + ' sanitário(s), ' + (db.masc_chuveiros||0) + ' chuveiro(s)<br>';
+        html += '<strong>🚺 Feminino:</strong> ' + (db.fem_sanitarios||0) + ' sanitário(s), ' + (db.fem_chuveiros||0) + ' chuveiro(s)';
+        if (db.unissex) html += '<br><strong style="color:#f08080">⚠️ Unissex</strong> — desconto de 1 ponto aplicado';
+        html += '</div>';
+      }
+
+      for(var ii=0;ii<cat.itens.length;ii++){
+        var item=cat.itens[ii];
+        if(!item || !item.opcoes) continue;
+        var op = item.opcoes[item.selecionado] || item.opcoes[0];
+        var pts = op ? op.pontos : 0;
+        var label = op ? op.label : '—';
+        html += '<div class="modal-item">';
+        html += '<div class="modal-item-nome">'+item.nome+'</div>';
+        html += '<div class="modal-item-valor">';
+        html += '<span class="modal-item-label">'+label+'</span>';
+        html += '<span class="modal-item-pts '+ptsClass(pts)+'">'+pts+'/5</span>';
+        html += '</div></div>';
+      }
+      html += '</div>';
+    }
+  } else {
+    html += '<div style="color:rgba(255,255,255,0.4);text-align:center;padding:40px 0">Detalhes não disponíveis para esta avaliação.</div>';
+  }
+
+  html += '<div class="modal-data">Avaliação realizada em: '+(c.data||'—')+'</div>';
+
+  document.getElementById('modalBody').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('aberto');
+  document.body.style.overflow = 'hidden';
+  gerarQrDoSelo(key);
+}
+
+function fecharModal() {
+  document.getElementById('modalOverlay').classList.remove('aberto');
+  document.body.style.overflow = '';
+}
+
+function fecharModalSe(e) {
+  if(e.target === document.getElementById('modalOverlay')) fecharModal();
+}
+
+// Fechar com ESC
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') fecharModal(); });
+
+// ── Abertura automática via QR Code (#camping=KEY) ──────────────────────
+function tentarAbrirViaHash() {
+  var hash = window.location.hash;
+  if (hash.indexOf('#camping=') === 0) {
+    var key = hash.replace('#camping=', '');
+    if (todosOsCampings.some(function(c){ return c._key === key; })) {
+      abrirModal(key);
+    }
+  }
+}
+window.addEventListener('hashchange', tentarAbrirViaHash);
+// Tenta logo após o primeiro carregamento dos dados do Firebase
+var _tentativasHash = 0;
+var _intervaloHash = setInterval(function(){
+  _tentativasHash++;
+  if (todosOsCampings.length > 0) {
+    tentarAbrirViaHash();
+    clearInterval(_intervaloHash);
+  }
+  if (_tentativasHash > 20) clearInterval(_intervaloHash);
+}, 300);
+
+// ── PWA: registrar service worker (permite instalar como app) ───────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('service-worker.js').catch(function (erro) {
+      console.warn('Service Worker não registrado:', erro);
+    });
+  });
+}
+</script>
+</body>
+</html>
