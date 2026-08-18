@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teste Cloudinary</title>
+<style>
+  body { font-family: -apple-system, sans-serif; padding: 24px; max-width: 500px; margin: 0 auto; }
+  input[type=file] { margin: 16px 0; padding: 12px; width: 100%; }
+  pre { background: #f0f0f0; padding: 16px; border-radius: 8px; white-space: pre-wrap; word-break: break-word; font-size: 13px; }
+  h2 { font-size: 16px; }
+</style>
+</head>
+<body>
+  <h1>Teste isolado — Cloudinary</h1>
+  <p><strong>cloud_name:</strong> cuz0nhap<br><strong>upload_preset:</strong> guiaexkombeiros_uploads</p>
+  <input type="file" id="fileInput" accept="image/*">
+  <h2>Resultado bruto:</h2>
+  <pre id="output">(escolha uma foto acima)</pre>
+
+<script>
+document.getElementById('fileInput').addEventListener('change', function(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var output = document.getElementById('output');
+  output.textContent = 'Enviando...';
+
+  var formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'guiaexkombeiros_uploads');
+
+  fetch('https://api.cloudinary.com/v1_1/cuz0nhap/image/upload', {
+    method: 'POST',
+    body: formData
+  })
+  .then(function(res) {
+    return res.text().then(function(text) {
+      return { status: res.status, statusText: res.statusText, body: text };
+    });
+  })
+  .then(function(result) {
+    output.textContent = 'HTTP Status: ' + result.status + ' ' + result.statusText + '\n\n' + result.body;
+  })
+  .catch(function(err) {
+    output.textContent = 'ERRO DE REDE/FETCH: ' + err.message;
+  });
+});
+</script>
+</body>
+</html>
