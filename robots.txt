@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /teste-cloudinary.html
+
+Sitemap: https://www.guiaexkombeiros.com.br/sitemap.xml
